@@ -34,7 +34,7 @@ const navItems = [
 
 const AppLayout = () => {
 	return (
-		<div className='relative min-h-screen flex justify-center items-center px-2 md:px-6'>
+		<div className='relative min-h-svh flex justify-center items-center px-2 md:px-6'>
 			{/* Blurred Bg */}
 			<img
 				src={'/app-bg.jpg'}
@@ -46,9 +46,9 @@ const AppLayout = () => {
 			<div
 				className='z-5 relative w-full max-w-300 mx-auto bg-teal-500/10 rounded-3xl h-full min-h-[90vh] md:min-h-[80vh] xl:min-h-[85vh] [@media(min-width:2000px)]:min-h-[50vh] flex flex-col gap-2 bg-cover bg-center border border-white/30'
 				style={{
-					// backgroundImage: `url('https://image.tmdb.org/t/p/original//pAyImoslSnpMgjRwhaS5ZEdl8UI.jpg')`,
+					backgroundImage: `url('https://image.tmdb.org/t/p/original//pAyImoslSnpMgjRwhaS5ZEdl8UI.jpg')`,
 					// backgroundImage: `url('https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg')`,
-					backgroundImage: `url('https://image.tmdb.org/t/p/original//qCOGGi8JBVEZMc3DVby8rUivyXz.jpg')`,
+					// backgroundImage: `url('https://image.tmdb.org/t/p/original//qCOGGi8JBVEZMc3DVby8rUivyXz.jpg')`,
 				}}>
 				<div className='absolute inset-0 z-2 bg-linear-to-b from-black/40 via-black/80 to-black rounded-3xl' />
 				{/* Floating Nav */}
