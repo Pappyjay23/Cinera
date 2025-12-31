@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline - Cinera</title>
+
+    <style>
+        @font-face {
+            font-family: 'Plus Jakarta Sans';
+            src: url('/fonts/PlusJakartaSans-Variable.woff2') format('woff2-variations'),
+                url('/fonts/PlusJakartaSans-Variable.woff2') format('woff2');
+            font-weight: 200 800;
+            font-display: swap;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #010b0b;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Background Image */
+        .bg-img {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(40px) grayscale(100%);
+            opacity: 0.6;
+            transform: scale(1.1);
+            z-index: 1;
+        }
+
+        /* Radial Overlay */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.4) 0%, #000 100%);
+        }
+
+        /* Main Content */
+        .content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* Glass Icon Badge */
+        .icon-badge {
+            padding: 16px;
+            border-radius: 999px;
+            height: 2.5em;
+            width: 2.5em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            margin-bottom: 16px;
+        }
+
+        @media screen and (min-width: 768px) {
+            .icon-badge {
+                height: 4em;
+                width: 4em;
+            }
+        }
+
+        .wifi-icon {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            opacity: 0.8;
+        }
+
+        /* Signal Text */
+        .signal {
+            text-transform: uppercase;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 0.5em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        /* Header */
+        .header {
+            font-size: clamp(4rem, 15vw, 7rem);
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            line-height: 1;
+            margin: 0;
+            background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0.2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+        }
+
+        .power-icon {
+            display: inline-block;
+            margin-right: 4px;
+            color: #fff;
+            -webkit-text-fill-color: #fff;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+            }
+
+            50% {
+                opacity: 0.75;
+                filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
+            }
+        }
+
+        /* Separator */
+        .separator {
+            width: 150px;
+            height: 1px;
+            margin: 24px 0;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        /* Description */
+        .description {
+            font-size: clamp(14px, 3vw, 18px);
+            opacity: 0.8;
+            max-width: 320px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .description span {
+            display: block;
+            font-size: 12px;
+            margin-top: 8px;
+            opacity: 0.6;
+            font-weight: 300;
+        }
+
+        /* Glass Button */
+        .btn {
+            margin-top: 20px;
+            padding: 12px 40px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 200;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            box-shadow:
+                inset 0 1px 1px rgba(255, 255, 255, 0.2),
+                0 10px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow:
+                inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+    <img src="/app-bg.jpg" alt="Background" class="bg-img" />
+    <div class="overlay"></div>
+
+    <main class="content">
+        <div class="icon-badge">
+            <span class="wifi-icon">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="icon-large"
+                    height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12.0001 18C12.7144 18 13.3704 18.2497 13.8856 18.6665L12.0001 21L10.1145 18.6665C10.6297 18.2497 11.2857 18 12.0001 18ZM2.80766 1.39343L20.4853 19.0711L19.0711 20.4853L13.8913 15.3042C13.2967 15.1069 12.6609 15 12.0001 15C10.5719 15 9.26024 15.499 8.22998 16.3322L6.97363 14.7759C8.24961 13.7442 9.84925 13.0969 11.5964 13.01L9.00025 10.414C7.55273 10.8234 6.22651 11.5217 5.0878 12.4426L3.83099 10.8868C4.89946 10.0226 6.10763 9.32438 7.41633 8.83118L5.13168 6.5451C3.98878 7.08913 2.92058 7.76472 1.94666 8.55228L0.689453 6.99674C1.60358 6.25747 2.59156 5.60589 3.64058 5.05479L1.39345 2.80765L2.80766 1.39343ZM14.5004 10.2854L12.2165 8.00243L12 8C15.0947 8 17.9369 9.08141 20.1693 10.8869L18.9123 12.4426C17.6438 11.4167 16.1427 10.6672 14.5004 10.2854ZM12.0001 3.00003C16.2849 3.00003 20.22 4.49719 23.3109 6.99691L22.0534 8.55228C19.3061 6.33062 15.8085 5.00003 12.0001 5.00003C11.122 5.00003 10.2604 5.07077 9.42075 5.20685L7.72455 3.51088C9.09498 3.17702 10.5268 3.00003 12.0001 3.00003Z">
+                    </path>
+                </svg>
+            </span>
+        </div>
+
+        <p class="signal">Signal Interrupted</p>
+
+        <h1 class="header">
+            <span class="power-icon">⏻</span>ffline
+        </h1>
+
+        <div class="separator"></div>
+
+        <p class="description">
+            Don’t worry, your data is safe.
+            <span>We’ll sync your cinematic journey once you’re back.</span>
+        </p>
+
+        <button class="btn" onclick="window.location.reload()">Reconnect</button>
+    </main>
+
+    <script>
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+    </script>
+</body>
+
+</html>
