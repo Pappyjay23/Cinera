@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import useNetworkStatus from "./hooks/useNetworkStatus";
 import type { AppRoute } from "./routes";
 import routes from "./routes";
@@ -25,32 +25,16 @@ const renderRoute = (route: AppRoute) => {
 	);
 };
 
-
 const App = () => {
+	const { isOnline } = useNetworkStatus();
 
-  const { isOnline } = useNetworkStatus();
-
-  if (!isOnline) {
-      return <OfflineScreen />;
-    }
+	if (!isOnline) {
+		return <OfflineScreen />;
+	}
 	return (
-		<BrowserRouter>
-			<div className='relative min-h-svh'>
-				{/* Hidden image to force caching */}
-				<img
-					src='/offline-bg.jpg'
-					alt=''
-					width={1}
-					height={1}
-					style={{ display: "none" }}
-				/>
-				<Routes>
-					{/* <Route element={<AppLayout />}> */}
-						{routes.map((r) => renderRoute(r))}
-					{/* </Route> */}
-				</Routes>
-			</div>
-		</BrowserRouter>
+		<div className='relative min-h-svh'>
+			<Routes>{routes.map((r) => renderRoute(r))}</Routes>
+		</div>
 	);
 };
 
