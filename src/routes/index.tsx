@@ -1,7 +1,8 @@
-import AppLayout from "../components/AppLayout";
-import HomeScreen from "../screens/Home/Home";
-import LoginScreen from "../screens/Login/Login";
-import NotFoundScreen from "../screens/NotFound/NotFound";
+import MovieDetailScreen from "@/screens/MovieDetail/MovieDetail";
+import AppLayout from "@/components/AppLayout";
+import HomeScreen from "@/screens/Home/Home";
+import LoginScreen from "@/screens/Login/Login";
+import NotFoundScreen from "@/screens/NotFound/NotFound";
 
 export type AppRoute = {
 	path: string;
@@ -17,6 +18,7 @@ const routes: AppRoute[] = [
 		children: [
 			{ path: "/", element: <HomeScreen /> },
 			{ path: "/search", element: <HomeScreen /> },
+			{ path: "/movie/:id", element: <MovieDetailScreen /> },
 		],
 	},
 

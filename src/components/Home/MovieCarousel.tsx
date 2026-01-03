@@ -3,6 +3,7 @@ import MovieCardSkeleton from "@/components/shared/MovieCardSkeleton";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 type CarouselMovie = {
 	id: number;
@@ -98,14 +99,15 @@ const MovieCarousel = ({ isLoading, movies, title }: MovieCarouselProps) => {
 						isLoading ? "opacity-0 z-1" : "opacity-100 z-2"
 					} transition-all duration-700 ease-in-out`}>
 					{movies.map((movie) => (
-						<MovieCard
-							genre={movie.genre}
-							image={movie.image}
-							hoverImage={movie.hoverImage}
-							title={movie.title}
-							year={movie.year}
-							key={movie.id}
-						/>
+						<Link to={`/movie/${movie.id}`} key={movie.id}>
+							<MovieCard
+								genre={movie.genre}
+								image={movie.image}
+								hoverImage={movie.hoverImage}
+								title={movie.title}
+								year={movie.year}
+							/>
+						</Link>
 					))}
 				</div>
 

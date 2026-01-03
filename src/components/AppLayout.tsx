@@ -101,7 +101,7 @@ const AppLayout = () => {
 
 					<div className=' w-full relative z-60 flex flex-col h-full'>
 						<Navbar />
-						<div className='h-max flex-1 flex overflow-y-auto'>
+						<div className='flex-1 flex overflow-hidden'>
 							<Outlet />
 						</div>
 					</div>
