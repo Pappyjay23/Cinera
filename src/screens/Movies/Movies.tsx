@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 const MoviesScreen = () => {
 	const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv">("all");
 	const [isLoading, setIsLoading] = useState(true);
-	const [movies, setMovies] = useState<any[]>([
+	const movies = [
 		{
 			id: 1,
 			title: "The Spongebob Movie: Sponge on the Run",
@@ -131,7 +131,7 @@ const MoviesScreen = () => {
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
 		},
-	]);
+	];
 	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
 	useEffect(() => {
