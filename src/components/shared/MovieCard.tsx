@@ -18,21 +18,21 @@ const MovieCard = ({
 	size = "sm",
 }: MovieCardProps) => {
 	const containerClasses =
-		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[200px] md:w-[260px]";
+		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[140px] md:w-[220px]";
 
 	return (
 		<div
-			className={`relative ${containerClasses} aspect-2/3 shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border border-white/30 hover:-translate-y-2.5 transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
+			className={`relative ${containerClasses} aspect-2/3 shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border border-white/30 transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
 			{/* Base Image */}
 			<img
 				src={image}
 				alt={title}
-				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-in-out'
+				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
 			/>
 			<img
 				src={hoverImage}
 				alt={title}
-				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out'
+				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out group-hover:scale-110'
 			/>
 
 			{/* Premium Scrim (Bottom Gradient) */}
@@ -64,14 +64,12 @@ const MovieCard = ({
 
 			<div className='absolute bottom-0 left-0 w-full p-5 z-30'>
 				<span
-					className={`px-2 py-0.5 bg-white/10 backdrop-blur-md border border-white/10 rounded-full ${
-						size === "sm" ? "text-[8px]" : "text-[10px]"
-					} capitalize tracking-wide font-normal text-teal-400 select-none`}>
+					className={`px-2 py-0.5 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-[8px] capitalize tracking-wide font-normal text-teal-400 select-none`}>
 					{genre}
 				</span>
 				<h3
 					className={`my-2 ${
-						size === "sm" ? "text-[10px] md:text-xs" : "text-xs md:text-base"
+						size === "sm" ? "text-[10px] md:text-xs" : "text-[10px] md:text-sm"
 					} font-light text-white leading-tight`}>
 					{title}
 				</h3>
@@ -79,7 +77,7 @@ const MovieCard = ({
 					className={`flex items-center gap-2 mt-1 ${
 						size === "sm"
 							? "text-[8px] md:text-[10px]"
-							: "text-[10px] md:text-xs"
+							: "text-[8px] md:text-xs"
 					}`}>
 					<span className='text-white/60'>{year}</span>
 					<span className='w-1 h-1 bg-white/30 rounded-full' />

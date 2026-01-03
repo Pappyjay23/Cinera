@@ -1,6 +1,6 @@
 const MovieCardSkeleton = ({ size = "sm" }: { size?: "sm" | "lg" }) => {
 	const containerClasses =
-		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[200px] md:w-[260px]";
+		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[140px] md:w-[220px]";
 
 	return (
 		<div

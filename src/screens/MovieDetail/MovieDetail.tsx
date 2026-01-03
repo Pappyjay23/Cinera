@@ -46,14 +46,14 @@ const MovieDetailScreen = () => {
 								"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg"
 							}
 							alt={"Spongebob"}
-							className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-in-out'
+							className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
 						/>
 						<img
 							src={
 								"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg"
 							}
 							alt={"Spongebob"}
-							className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out'
+							className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out group-hover:scale-110'
 						/>
 						{/* Premium Scrim (Bottom Gradient) */}
 						<div className='absolute inset-0 bg-linear-to-b from-transparent via-black/60 to-black z-10' />
