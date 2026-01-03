@@ -17,7 +17,7 @@ const navItems = [
 		icon: IoSearch,
 	},
 	{
-		name: "Movies",
+		name: "Movies & TV Series",
 		href: "/movies",
 		icon: BiSolidMoviePlay,
 	},

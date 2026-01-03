@@ -141,7 +141,7 @@ const HomeScreen = () => {
 			<Hero />
 			<div className='p-4 relative w-full'>
 				<div className='absolute inset-0 z-20 bg-linear-to-b from-black/40 via-black/80 to-black blur-lg' />
-				<div className='relative flex flex-col gap-2 z-30'>
+				<div className='relative flex flex-col gap-2 z-30 pb-10'>
 					<MovieCarousel isLoading={isLoading} movies={trendingMovies} title="Trending:" />
 					<MovieCarousel isLoading={isLoading} movies={trendingMovies} title="Upcoming Movies:" />
 				</div>

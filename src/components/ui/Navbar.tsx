@@ -20,7 +20,12 @@ const Navbar = () => {
 
 		tl.current = gsap.timeline({ paused: true }).fromTo(
 			dropDownRef.current,
-			{ opacity: 0, y: -10, scale: 0.95, filter: "blur(10px)" },
+			{
+				opacity: 0,
+				y: -10,
+				scale: 0.95,
+				filter: "blur(10px)",
+			},
 			{
 				opacity: 1,
 				y: 0,
@@ -103,7 +108,9 @@ const Navbar = () => {
 						{/* DROPDOWN MENU */}
 						<div
 							ref={dropDownRef}
-							className='absolute top-12 right-0 w-48 bg-[#053330] threed-effect border border-white/10 backdrop-blur-3xl rounded-2xl p-2 shadow-2xl z-50 opacity-0'>
+							className={`absolute top-12 right-0 w-48 bg-[#053330] threed-effect border border-white/10 backdrop-blur-3xl rounded-2xl p-2 shadow-2xl z-50 opacity-0 ${
+								showDropdown ? "visible" : "invisible"
+							}`}>
 							<div className='px-3 py-2 mb-1 border-bottom border-white/5'>
 								<p className='text-[10px] text-white/50 uppercase tracking-widest'>
 									Account

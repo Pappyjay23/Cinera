@@ -76,7 +76,7 @@ const MovieDetailScreen = () => {
 
 						<div className='mt-3'>
 							<p className='capitalize tracking-normal text-xs md:text-sm font-normal mb-1'>
-								Description
+								Overview
 							</p>
 							<p className='font-light text-xs md:text-sm'>
 								A listless Wade Wilson toils away in civilian life with his days
