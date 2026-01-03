@@ -42,13 +42,21 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-	background: rgba(255, 255, 255, 0.05);
+	background: var(--background);
 	border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: var(--foreground);
+	background: rgb(20, 184, 166);
 	border-radius: 10px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 
 .threed-effect {
@@ -74,4 +82,14 @@ body {
 
 .animate-power-pulse {
 	animation: power-glow 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }

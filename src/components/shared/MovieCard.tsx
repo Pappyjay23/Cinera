@@ -1,0 +1,93 @@
+import { FaPlay, FaPlus } from "react-icons/fa";
+
+interface MovieCardProps {
+	title: string;
+	year: string;
+	image: string;
+	hoverImage: string;
+	genre: string;
+	size?: "sm" | "lg";
+}
+
+const MovieCard = ({
+	title,
+	year,
+	image,
+	genre,
+	hoverImage,
+	size = "sm",
+}: MovieCardProps) => {
+	const containerClasses =
+		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[200px] md:w-[260px]";
+
+	return (
+		<div
+			className={`relative ${containerClasses} aspect-2/3 shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border border-white/30 hover:-translate-y-2.5 transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
+			{/* Base Image */}
+			<img
+				src={image}
+				alt={title}
+				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-opacity duration-700 ease-in-out'
+			/>
+			<img
+				src={hoverImage}
+				alt={title}
+				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out'
+			/>
+
+			{/* Premium Scrim (Bottom Gradient) */}
+			<div className='absolute inset-0 bg-linear-to-b from-transparent via-black/60 to-black z-10' />
+
+			{/* Hover Overlay Content */}
+			<div className='absolute inset-0 bg-black/40 backdrop-blur-[1px] z-20 transition-all duration-700 ease-in-out group-hover:opacity-100 opacity-0'>
+				<div className='absolute top-4 right-4 flex gap-2'>
+					<button className='p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+						<FaPlus
+							className={`${
+								size === "sm"
+									? "text-[6px] md:text-[8px]"
+									: "text-[8px] md:text-xs"
+							}`}
+						/>
+					</button>
+					<button className='p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+						<FaPlay
+							className={`${
+								size === "sm"
+									? "text-[6px] md:text-[8px]"
+									: "text-[8px] md:text-xs"
+							}`}
+						/>
+					</button>
+				</div>
+			</div>
+
+			<div className='absolute bottom-0 left-0 w-full p-5 z-30'>
+				<span
+					className={`px-2 py-0.5 bg-white/10 backdrop-blur-md border border-white/10 rounded-full ${
+						size === "sm" ? "text-[8px]" : "text-[10px]"
+					} capitalize tracking-wide font-normal text-teal-400 select-none`}>
+					{genre}
+				</span>
+				<h3
+					className={`my-2 ${
+						size === "sm" ? "text-[10px] md:text-xs" : "text-xs md:text-base"
+					} font-light text-white leading-tight`}>
+					{title}
+				</h3>
+				<div
+					className={`flex items-center gap-2 mt-1 ${
+						size === "sm"
+							? "text-[8px] md:text-[10px]"
+							: "text-[10px] md:text-xs"
+					}`}>
+					<span className='text-white/60'>{year}</span>
+					<span className='w-1 h-1 bg-white/30 rounded-full' />
+					<span className='text-teal-500 font-medium'>Ultra HD</span>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default MovieCard;

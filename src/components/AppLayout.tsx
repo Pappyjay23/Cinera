@@ -2,8 +2,8 @@ import { UseHomeCinema } from "@/context/HomeCinemaContext";
 import { BiSolidMoviePlay } from "react-icons/bi";
 import { FaHome } from "react-icons/fa";
 import { IoBookmark, IoSearch } from "react-icons/io5";
-import { LuUserRound } from "react-icons/lu";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
+import Navbar from "@/components/ui/Navbar";
 
 const navItems = [
 	{
@@ -11,11 +11,11 @@ const navItems = [
 		href: "/",
 		icon: FaHome,
 	},
-	// {
-	// 	name: "Search",
-	// 	href: "/search",
-	// 	icon: IoSearch,
-	// },
+	{
+		name: "Search",
+		href: "/search",
+		icon: IoSearch,
+	},
 	{
 		name: "Movies",
 		href: "/movies",
@@ -25,11 +25,6 @@ const navItems = [
 		name: "Bookmarks",
 		href: "/bookmarks",
 		icon: IoBookmark,
-	},
-	{
-		name: "Profile",
-		href: "/login",
-		icon: LuUserRound,
 	},
 ];
 
@@ -105,27 +100,7 @@ const AppLayout = () => {
 					<div className='absolute inset-0 z-30 bg-linear-to-b from-black/40 via-black/80 to-black' />
 
 					<div className=' w-full relative z-60 flex flex-col h-full'>
-						<div className='flex items-center justify-between gap-2 absolute top-0 left-0 w-full p-4 backdrop-blur-sm z-100 rounded-t-3xl'>
-							<Link
-								to='/'
-								className='bg-white/3 rounded-full py-1 pl-1 pr-3 w-fit backdrop-blur-sm border border-white/15 shadow-[inset_0px_1px_2px_rgba(255,255,255,0.15),0px_2px_8px_rgba(0,0,0,0.15)] active:scale-95 transition-all duration-300 ease-in-out'>
-								<div className='flex items-center gap-1.5'>
-									<img
-										src={"/logo.png"}
-										alt='Logo'
-										className='w-7 md:w-9 h-7 md:h-9 rounded-full border border-white/10 bg-teal-900 p-0.75 threed-effect'
-									/>
-									<p className='text-[0.8rem] md:text-[1rem] lowercase font-plus-jakarta tracking-tight font-bold drop-shadow-[0_2px_1px_rgba(0,0,0,0.8)] [text-shadow:0px_1px_0px_rgba(255,255,255,0.4)]'>
-										cinera
-									</p>
-								</div>
-							</Link>
-							<div className='flex justify-center items-center w-8 md:w-10 h-8 md:h-10 text-base md:text-lg bg-white/5 rounded-full border border-white/10 backdrop-blur-3xl cursor-pointer threed-effect active:scale-90 transition-all duration-300 ease-in-out'>
-								<span>
-									<IoSearch />
-								</span>
-							</div>
-						</div>
+						<Navbar />
 						<div className='h-max flex-1 flex overflow-y-auto'>
 							<Outlet />
 						</div>
