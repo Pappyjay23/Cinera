@@ -74,14 +74,15 @@ const Navbar = () => {
 				{!isLoggedIn ? (
 					/* LOGGED OUT STATE: The Pill */
 					<div className='flex items-center gap-1 md:gap-2 p-1 bg-white/5 border border-white/10 rounded-full shadow-[inset_0px_1px_2px_rgba(255,255,255,0.15),0px_2px_8px_rgba(0,0,0,0.15)]'>
-						<button
+						<Link
+							to='/login'
 							onClick={() => setIsLoggedIn(true)}
 							className='px-4 py-1.5 text-[10px] rounded-full border border-white/5 hover:bg-white/10 threed-effect cursor-pointer transition-all duration-300 ease-in-out active:scale-95'>
 							Sign in
-						</button>
-						<button className='px-4 py-1.5 text-[10px] bg-teal-600 rounded-full shadow-lg shadow-teal-900/20 threed-effect cursor-pointer transition-all duration-300 ease-in-out active:scale-95'>
+						</Link>
+						<Link to='/signup' className='px-4 py-1.5 text-[10px] bg-teal-600 rounded-full shadow-lg shadow-teal-900/20 threed-effect cursor-pointer transition-all duration-300 ease-in-out active:scale-95'>
 							Sign up
-						</button>
+						</Link>
 					</div>
 				) : (
 					/* LOGGED IN STATE: The Orbit */
@@ -121,12 +122,12 @@ const Navbar = () => {
 							</div>
 
 							<Link
-								to='/bookmarks'
+								to='/watchlist'
 								onClick={() => {
 									setShowDropdown(false);
 								}}
 								className='w-full flex items-center gap-2 px-3 py-2 text-xs text-white/80 hover:bg-white/10 rounded-lg transition-colors'>
-								<IoBookmark size={14} /> Bookmarks
+								<IoBookmark size={14} /> My Watchlist
 							</Link>
 
 							<div className='h-px bg-white/10 my-1' />

@@ -17,10 +17,18 @@ type CarouselMovie = {
 interface MovieCarouselProps {
 	isLoading: boolean;
 	movies: CarouselMovie[];
-	title: string;
+	title?: string;
+	type?: string;
+	size?: "sm" | "lg";
 }
 
-const MovieCarousel = ({ isLoading, movies, title }: MovieCarouselProps) => {
+const MovieCarousel = ({
+	isLoading,
+	movies,
+	title,
+	size = "sm",
+	type,
+}: MovieCarouselProps) => {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showLeftArrow, setShowLeftArrow] = useState(false);
 	const [showRightArrow, setShowRightArrow] = useState(true);
@@ -63,9 +71,11 @@ const MovieCarousel = ({ isLoading, movies, title }: MovieCarouselProps) => {
 
 	return (
 		<div className='flex flex-col group/carousel'>
-			<p className='capitalized tracking-normal font-plus-jakarta font-medium mb-1'>
-				{title}
-			</p>
+			{title && (
+				<p className='capitalized tracking-normal font-plus-jakarta font-medium mb-1'>
+					{title}
+				</p>
+			)}
 
 			<div className='relative'>
 				{!isLoading && (
@@ -101,11 +111,13 @@ const MovieCarousel = ({ isLoading, movies, title }: MovieCarouselProps) => {
 					{movies.map((movie) => (
 						<Link to={`/movie/${movie.id}`} key={movie.id}>
 							<MovieCard
+								size={size}
 								genre={movie.genre}
 								image={movie.image}
 								hoverImage={movie.hoverImage}
 								title={movie.title}
 								year={movie.year}
+								type={type}
 							/>
 						</Link>
 					))}
@@ -118,7 +130,7 @@ const MovieCarousel = ({ isLoading, movies, title }: MovieCarouselProps) => {
 					{Array(8)
 						.fill(null)
 						.map((_, index) => (
-							<MovieCardSkeleton key={index} />
+							<MovieCardSkeleton key={index} size={size} />
 						))}
 				</div>
 			</div>

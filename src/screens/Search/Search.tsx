@@ -157,7 +157,7 @@ const SearchScreen = () => {
 			{movies.length > 0 ? (
 				<div className='relative flex mt-4'>
 					<div
-						className={`relative flex justify-center gap-3 items-center py-4 w-full h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] overflow-y-auto flex-wrap ${
+						className={`relative flex justify-center gap-3 items-center pt-4 w-full h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-10 lg:pb-20 overflow-y-auto flex-wrap ${
 							isLoading ? "opacity-0 z-1" : "opacity-100 z-2"
 						} transition-all duration-700 ease-in-out`}>
 						{movies.map((movie) => (

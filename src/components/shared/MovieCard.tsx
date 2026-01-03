@@ -1,4 +1,5 @@
 import { FaPlay, FaPlus } from "react-icons/fa";
+import { IoTrashOutline } from "react-icons/io5";
 
 interface MovieCardProps {
 	title: string;
@@ -7,6 +8,7 @@ interface MovieCardProps {
 	hoverImage: string;
 	genre: string;
 	size?: "sm" | "lg";
+	type?: string;
 }
 
 const MovieCard = ({
@@ -15,6 +17,7 @@ const MovieCard = ({
 	image,
 	genre,
 	hoverImage,
+	type,
 	size = "sm",
 }: MovieCardProps) => {
 	const containerClasses =
@@ -41,24 +44,69 @@ const MovieCard = ({
 			{/* Hover Overlay Content */}
 			<div className='absolute inset-0 bg-black/40 backdrop-blur-[1px] z-20 transition-all duration-700 ease-in-out group-hover:opacity-100 opacity-0'>
 				<div className='absolute top-4 right-4 flex gap-2'>
-					<button className='p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
-						<FaPlus
-							className={`${
-								size === "sm"
-									? "text-[6px] md:text-[8px]"
-									: "text-[8px] md:text-xs"
-							}`}
-						/>
-					</button>
-					<button className='p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
-						<FaPlay
-							className={`${
-								size === "sm"
-									? "text-[6px] md:text-[8px]"
-									: "text-[8px] md:text-xs"
-							}`}
-						/>
-					</button>
+					{type === "watchlist" ? (
+						<>
+							<button
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								<FaPlay
+									className={`${
+										size === "sm"
+											? "text-[6px] md:text-[8px]"
+											: "text-[8px] md:text-xs"
+									}`}
+								/>
+							</button>
+							<button
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								<IoTrashOutline
+									className={`${
+										size === "sm"
+											? "text-[6px] md:text-[8px]"
+											: "text-[8px] md:text-xs"
+									}`}
+								/>
+							</button>
+						</>
+					) : (
+						<>
+							<button
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								<FaPlus
+									className={`${
+										size === "sm"
+											? "text-[6px] md:text-[8px]"
+											: "text-[8px] md:text-xs"
+									}`}
+								/>
+							</button>
+							<button
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								<FaPlay
+									className={`${
+										size === "sm"
+											? "text-[6px] md:text-[8px]"
+											: "text-[8px] md:text-xs"
+									}`}
+								/>
+							</button>
+						</>
+					)}
 				</div>
 			</div>
 

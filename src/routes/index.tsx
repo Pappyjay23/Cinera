@@ -1,11 +1,11 @@
-import MovieDetailScreen from "@/screens/MovieDetail/MovieDetail";
 import AppLayout from "@/components/AppLayout";
+import AuthScreen from "@/screens/Auth/Auth";
 import HomeScreen from "@/screens/Home/Home";
-import LoginScreen from "@/screens/Login/Login";
+import MovieDetailScreen from "@/screens/MovieDetail/MovieDetail";
+import MoviesScreen from "@/screens/Movies/Movies";
 import NotFoundScreen from "@/screens/NotFound/NotFound";
 import SearchScreen from "@/screens/Search/Search";
-import MoviesScreen from "@/screens/Movies/Movies";
-import BookmarksScreen from "@/screens/Bookmarks/Bookmarks";
+import BookmarksScreen from "@/screens/Watchlist/Watchlist";
 
 export type AppRoute = {
 	path: string;
@@ -23,12 +23,12 @@ const routes: AppRoute[] = [
 			{ path: "/search", element: <SearchScreen /> },
 			{ path: "/movie/:id", element: <MovieDetailScreen /> },
 			{ path: "/movies", element: <MoviesScreen /> },
-			{ path: "/bookmarks", element: <BookmarksScreen /> },
+			{ path: "/watchlist", element: <BookmarksScreen /> },
 		],
 	},
 
-	{ path: "/login", element: <LoginScreen /> },
-	// { path: "/sign-up", element: <SignUpScreen /> },
+	{ path: "/login", element: <AuthScreen /> },
+	{ path: "/signup", element: <AuthScreen /> },
 
 	{ path: "*", element: <NotFoundScreen /> },
 ];

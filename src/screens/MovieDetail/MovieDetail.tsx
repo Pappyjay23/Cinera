@@ -78,7 +78,7 @@ const MovieDetailScreen = () => {
 							<p className='capitalize tracking-normal text-xs md:text-sm font-normal mb-1'>
 								Overview
 							</p>
-							<p className='font-light text-xs md:text-sm'>
+							<p className='font-extralight tracking-wide text-[10px] md:text-xs font-plus-jakarta leading-[1.3rem]'>
 								A listless Wade Wilson toils away in civilian life with his days
 								as the morally flexible mercenary, Deadpool, behind him. But
 								when his homeworld faces an existential threat, Wade must

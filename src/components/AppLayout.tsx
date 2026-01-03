@@ -22,8 +22,8 @@ const navItems = [
 		icon: BiSolidMoviePlay,
 	},
 	{
-		name: "Bookmarks",
-		href: "/bookmarks",
+		name: "Watchlist",
+		href: "/watchlist",
 		icon: IoBookmark,
 	},
 ];

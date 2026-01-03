@@ -19,7 +19,7 @@ const MovieCardSkeleton = ({ size = "sm" }: { size?: "sm" | "lg" }) => {
 				{/* Title Skeleton */}
 				<div
 					className={`h-3 bg-white/10 rounded-sm mb-2 ${
-						size === "sm" ? "w-24" : "w-32"
+						size === "sm" ? "w-24" : "w-24 md:w-32"
 					}`}
 				/>
 				<div
