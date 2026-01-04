@@ -1,3 +1,4 @@
+import { UseHomeCinema } from "@/context/HomeCinemaContext";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import { HiChevronLeft } from "react-icons/hi";
 import { SiAppletv, SiNetflix, SiPrimevideo } from "react-icons/si";
@@ -6,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const MovieDetailScreen = () => {
 	const navigate = useNavigate();
+	const { setShowTrailerModal } = UseHomeCinema();
 
 	const providers = [
 		{ name: "Netflix", icon: <SiNetflix />, color: "hover:text-[#E50914]" },
@@ -63,7 +65,9 @@ const MovieDetailScreen = () => {
 								<FaPlus />
 								<span>Add to Bookmarks</span>
 							</button>
-							<button className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm font-normal hover:bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm'>
+							<button
+								onClick={() => setShowTrailerModal(true)}
+								className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm font-normal hover:bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm'>
 								<FaPlay />
 								<span>Watch Trailer</span>
 							</button>

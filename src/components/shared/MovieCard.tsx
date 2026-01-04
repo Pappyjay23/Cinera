@@ -1,3 +1,4 @@
+import { UseHomeCinema } from "@/context/HomeCinemaContext";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 
@@ -20,6 +21,8 @@ const MovieCard = ({
 	type,
 	size = "sm",
 }: MovieCardProps) => {
+	const { setShowTrailerModal } = UseHomeCinema();
+
 	const containerClasses =
 		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[140px] md:w-[220px]";
 
@@ -50,6 +53,7 @@ const MovieCard = ({
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
+									setShowTrailerModal(true);
 								}}
 								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay
@@ -95,6 +99,7 @@ const MovieCard = ({
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
+									setShowTrailerModal(true);
 								}}
 								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay

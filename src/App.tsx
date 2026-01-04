@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+import VideoModal from "./components/shared/VideoModal";
+import { UseHomeCinema } from "./context/HomeCinemaContext";
 import useNetworkStatus from "./hooks/useNetworkStatus";
 import type { AppRoute } from "./routes";
 import routes from "./routes";
@@ -27,12 +29,24 @@ const renderRoute = (route: AppRoute) => {
 
 const App = () => {
 	const { isOnline } = useNetworkStatus();
+	const { showTrailerModal, setShowTrailerModal } = UseHomeCinema();
+
+	const activeVideo = {
+		title: "Spider-Man: Across the Spider-Verse",
+		url: `https://www.youtube.com/embed/${"shW9i6k8cB0"}`,
+	};
 
 	if (!isOnline) {
 		return <OfflineScreen />;
 	}
 	return (
 		<div className='relative min-h-svh'>
+			<VideoModal
+				isOpen={showTrailerModal}
+				onClose={() => setShowTrailerModal(false)}
+				videoUrl={activeVideo?.url || ""}
+				videoTitle={activeVideo?.title || ""}
+			/>
 			<Routes>{routes.map((r) => renderRoute(r))}</Routes>
 		</div>
 	);

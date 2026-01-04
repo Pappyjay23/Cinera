@@ -9,8 +9,14 @@ import { MdKeyboardDoubleArrowDown } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 const Hero = () => {
-	const { activeMovie, nextMovie, handleNext, heroMovies, isTransitioning } =
-		UseHomeCinema();
+	const {
+		activeMovie,
+		nextMovie,
+		handleNext,
+		heroMovies,
+		isTransitioning,
+		setShowTrailerModal,
+	} = UseHomeCinema();
 
 	const textContainerRef = useRef<HTMLDivElement>(null);
 
@@ -110,7 +116,9 @@ const Hero = () => {
 					{activeMovie.title}
 				</h1>
 				<div className='flex mb-4'>
-					<button className='text-[10px] md:text-xs mr-4 px-6 py-2 rounded bg-white/10 font-medium flex items-center backdrop-blur-[2px] cursor-pointer active:scale-95 transition-all duration-300 ease-in-out'>
+					<button
+						onClick={() => setShowTrailerModal(true)}
+						className='text-[10px] md:text-xs mr-4 px-6 py-2 rounded bg-white/10 font-medium flex items-center backdrop-blur-[2px] cursor-pointer active:scale-95 transition-all duration-300 ease-in-out'>
 						<span className='mr-1'>
 							<BsFillPlayFill />
 						</span>

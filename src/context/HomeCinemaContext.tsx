@@ -19,6 +19,8 @@ interface HomeCinemaContextType {
 	handleNext: () => void;
 	isTransitioning: boolean;
 	heroMovies: Movie[];
+	showTrailerModal: boolean;
+	setShowTrailerModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const HomeCinemaContext = createContext<HomeCinemaContextType | undefined>(
@@ -51,6 +53,8 @@ export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
 	const nextIndex = (activeIndex + 1) % heroMovies.length;
 	const nextMovie = heroMovies[nextIndex];
 
+	const [showTrailerModal, setShowTrailerModal] = useState(false);
+
 	const handleNext = () => {
 		if (isTransitioning) return;
 		setIsTransitioning(true);
@@ -76,6 +80,8 @@ export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
 				handleNext,
 				isTransitioning,
 				heroMovies,
+				setShowTrailerModal,
+				showTrailerModal,
 			}}>
 			{children}
 		</HomeCinemaContext.Provider>
