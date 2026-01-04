@@ -45,7 +45,7 @@ const MovieCard = ({
 			<div className='absolute inset-0 bg-linear-to-b from-transparent via-black/60 to-black z-10' />
 
 			{/* Hover Overlay Content */}
-			<div className='absolute inset-0 bg-black/40 backdrop-blur-[1px] z-20 transition-all duration-700 ease-in-out group-hover:opacity-100 opacity-0'>
+			<div className='absolute inset-0 lg:bg-black/40 lg:backdrop-blur-[1px] z-20 transition-all duration-700 ease-in-out group-hover:opacity-100 opacity-100 lg:opacity-0'>
 				<div className='absolute top-4 right-4 flex gap-2'>
 					{type === "watchlist" ? (
 						<>
@@ -55,7 +55,7 @@ const MovieCard = ({
 									e.stopPropagation();
 									setShowTrailerModal(true);
 								}}
-								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay
 									className={`${
 										size === "sm"
@@ -69,12 +69,12 @@ const MovieCard = ({
 									e.preventDefault();
 									e.stopPropagation();
 								}}
-								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<IoTrashOutline
 									className={`${
 										size === "sm"
-											? "text-[6px] md:text-[8px]"
-											: "text-[8px] md:text-xs"
+											? "text-[8px] md:text-[10px]"
+											: "text-[10px] md:text-sm"
 									}`}
 								/>
 							</button>
@@ -86,7 +86,7 @@ const MovieCard = ({
 									e.preventDefault();
 									e.stopPropagation();
 								}}
-								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlus
 									className={`${
 										size === "sm"
@@ -101,7 +101,7 @@ const MovieCard = ({
 									e.stopPropagation();
 									setShowTrailerModal(true);
 								}}
-								className='transform-gpu p-3 bg-white/10 hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay
 									className={`${
 										size === "sm"

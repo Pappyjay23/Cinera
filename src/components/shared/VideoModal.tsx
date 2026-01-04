@@ -88,7 +88,7 @@ const VideoModal = ({
 
 				<div className='mt-4 flex items-center justify-center gap-2 text-white'>
 					<IoInformationCircleOutline size={14} />
-					<span className='text-[10px] uppercase tracking-[0.2rem]'>
+					<span className='text-[8px] md:text-[10px] uppercase tracking-widest'>
 						Press ESC or click outside to close
 					</span>
 				</div>
