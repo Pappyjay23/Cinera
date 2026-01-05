@@ -55,7 +55,7 @@ const MovieCard = ({
 									e.stopPropagation();
 									setShowTrailerModal(true);
 								}}
-								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay
 									className={`${
 										size === "sm"
@@ -69,7 +69,7 @@ const MovieCard = ({
 									e.preventDefault();
 									e.stopPropagation();
 								}}
-								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-2 lg:p-3 bg-red-500 lg:bg-white/10 threed-effect hover:bg-red-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<IoTrashOutline
 									className={`${
 										size === "sm"
@@ -86,7 +86,7 @@ const MovieCard = ({
 									e.preventDefault();
 									e.stopPropagation();
 								}}
-								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlus
 									className={`${
 										size === "sm"
@@ -101,7 +101,7 @@ const MovieCard = ({
 									e.stopPropagation();
 									setShowTrailerModal(true);
 								}}
-								className='transform-gpu p-3 bg-teal-500 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
+								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay
 									className={`${
 										size === "sm"

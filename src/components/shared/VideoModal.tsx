@@ -22,13 +22,11 @@ const VideoModal = ({
 		}
 
 		const handleKeyDown = (event: KeyboardEvent) => {
-			console.log(event.key);
 			if (event.key === "Escape") {
 				onClose();
 			}
 		};
 
-		console.log("it works");
 
 		document.addEventListener("keydown", handleKeyDown);
 

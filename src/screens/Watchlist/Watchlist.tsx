@@ -45,46 +45,7 @@ const bookmarks = [
 		hoverImage:
 			"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
 	},
-	{
-		id: 1,
-		title: "The Spongebob Movie: Sponge on the Run",
-		year: "2025",
-		genre: "Fantasy",
-		image:
-			"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
-	},
-	{
-		id: 2,
-		title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle",
-		year: "2025",
-		genre: "Fantasy",
-		image:
-			"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
-	},
-	{
-		id: 3,
-		title: "Now You See Me: Now You Don't",
-		year: "2025",
-		genre: "Magic",
-		image:
-			"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
-	},
-	{
-		id: 4,
-		title: "Avatar: The Last Airbender",
-		year: "2005",
-		genre: "Action",
-		image:
-			"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
-	},
+	
 ];
 
 const WatchlistScreen = () => {
@@ -100,7 +61,7 @@ const WatchlistScreen = () => {
 	}, []);
 
 	return (
-		<div className='flex-1 overflow-hidden pt-20 pb-12 px-4 md:px-6 bg-black/40 backdrop-blur-xs w-full'>
+		<div className='relative flex-1 overflow-hidden pt-20 pb-12 px-4 md:px-6 bg-black/40 backdrop-blur-xs w-full'>
 			{/* Header Section */}
 			<div className='flex flex-col md:flex-row md:items-end justify-between gap-3 mb-3 border-b border-white/5 pb-4'>
 				<div>
@@ -132,19 +93,25 @@ const WatchlistScreen = () => {
 				</div>
 			</div>
 
-			<div className='flex flex-wrap h-[55svh] md:h-[60svh] lg:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-5 md:pb-20 overflow-y-auto'>
+			<div className='relative flex-1 w-full'>
 				{bookmarks.length > 0 ? (
-					<div className="relative">
-						<div className={`absolute flex flex-wrap justify-center gap-6 ${isLoading ? "opacity-100": "opacity-0"} transition-all duration-1000 ease-in-out`}>
+					<div className='relative'>
+						<div
+							className={`absolute flex flex-wrap justify-center gap-6 ${
+								isLoading ? "opacity-100" : "opacity-0"
+							} transition-all duration-1000 ease-in-out overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20`}>
 							{Array(8)
 								.fill(0)
 								.map((_, i) => (
 									<MovieCardSkeleton size='lg' key={i} />
 								))}
 						</div>
-						<div className={`flex flex-wrap justify-center gap-6 ${isLoading ? "opacity-0": "opacity-100"} transition-all duration-1000 ease-in-out`}>
+						<div
+							className={`relative flex flex-wrap justify-center gap-6 ${
+								isLoading ? "opacity-0" : "opacity-100"
+							} transition-all duration-1000 ease-in-out overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20`}>
 							{bookmarks.map((movie) => (
-								<Link to={`/movie/${movie.id}`}>
+								<Link key={movie.id} to={`/movie/${movie.id}`}>
 									<MovieCard
 										size='lg'
 										type='watchlist'
