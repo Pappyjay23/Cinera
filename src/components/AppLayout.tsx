@@ -83,7 +83,7 @@ const AppLayout = () => {
 				</div>
 
 				<div className='relative z-10 h-full flex-1 w-full overflow-hidden rounded-3xl'>
-					{heroMovies.map((movie, index) => (
+					{heroMovies?.map((movie, index) => (
 						<img
 							key={movie.id}
 							src={movie.bg}

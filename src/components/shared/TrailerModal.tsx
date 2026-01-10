@@ -1,19 +1,19 @@
 import { useEffect } from "react";
 import { IoClose, IoInformationCircleOutline } from "react-icons/io5";
 
-interface VideoModalProps {
+interface TrailerModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	videoUrl: string;
-	videoTitle: string;
+	trailerUrl: string;
+	trailerTitle: string;
 }
 
-const VideoModal = ({
+const TrailerModal = ({
 	isOpen,
 	onClose,
-	videoUrl,
-	videoTitle,
-}: VideoModalProps) => {
+	trailerUrl,
+	trailerTitle,
+}: TrailerModalProps) => {
 	useEffect(() => {
 		if (isOpen) {
 			document.body.style.overflow = "hidden";
@@ -26,7 +26,6 @@ const VideoModal = ({
 				onClose();
 			}
 		};
-
 
 		document.addEventListener("keydown", handleKeyDown);
 
@@ -64,7 +63,7 @@ const VideoModal = ({
 							Now Playing
 						</span>
 						<h2 className='text-white text-lg md:text-2xl font-semibold truncate max-w-62.5 md:max-w-xl drop-shadow-lg'>
-							{videoTitle}
+							{trailerTitle}
 						</h2>
 					</div>
 				</div>
@@ -75,11 +74,11 @@ const VideoModal = ({
 					<iframe
 						width='100%'
 						height='100%'
-						src={videoUrl}
+						src={trailerUrl}
 						frameBorder='0'
 						allow='autoplay; encrypted-media; picture-in-picture'
 						allowFullScreen
-						title={videoTitle}
+						title={trailerTitle}
 						className='w-full h-full'
 					/>
 				</div>
@@ -95,4 +94,4 @@ const VideoModal = ({
 	);
 };
 
-export default VideoModal;
+export default TrailerModal;

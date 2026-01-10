@@ -1,6 +1,7 @@
 import { UseHomeCinema } from "@/context/HomeCinemaContext";
+import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
-import { IoTrashOutline } from "react-icons/io5";
+import { IoFilmOutline, IoTrashOutline } from "react-icons/io5";
 
 interface MovieCardProps {
 	title: string;
@@ -22,24 +23,47 @@ const MovieCard = ({
 	size = "sm",
 }: MovieCardProps) => {
 	const { setShowTrailerModal } = UseHomeCinema();
+	const [imgError, setImgError] = useState(false);
 
 	const containerClasses =
 		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[140px] md:w-[220px]";
 
+	const Placeholder = (
+		<div className='absolute inset-0 flex flex-col items-center justify-center bg-slate-950'>
+			<div className='absolute w-20 h-20 bg-teal-500/10 blur-2xl rounded-full' />
+
+			<div className='relative z-10 flex flex-col items-center'>
+				<IoFilmOutline
+					className='text-teal-500/30 mb-2 transform group-hover:scale-110 transition-transform duration-700'
+					size={size === "sm" ? 32 : 44}
+				/>
+				<span className='text-[8px] uppercase tracking-widest text-white/50 font-bold'>
+					No Preview
+				</span>
+			</div>
+		</div>
+	);
+
 	return (
 		<div
-			className={`relative ${containerClasses} aspect-2/3 shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border border-white/30 transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
-			{/* Base Image */}
-			<img
-				src={image}
-				alt={title}
-				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
-			/>
-			<img
-				src={hoverImage}
-				alt={title}
-				className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out group-hover:scale-110'
-			/>
+			className={`relative ${containerClasses} aspect-2/3 shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border ${imgError ? "border-white/10":"border-white/30"} transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
+			{!image || imgError ? (
+				Placeholder
+			) : (
+				<>
+					<img
+						src={image}
+						alt={title}
+						onError={() => setImgError(true)}
+						className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
+					/>
+					<img
+						src={hoverImage || image}
+						alt={title}
+						className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out group-hover:scale-110'
+					/>
+				</>
+			)}
 
 			{/* Premium Scrim (Bottom Gradient) */}
 			<div className='absolute inset-0 bg-linear-to-b from-transparent via-black/60 to-black z-10' />

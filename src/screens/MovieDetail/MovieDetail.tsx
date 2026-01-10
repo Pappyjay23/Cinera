@@ -1,30 +1,79 @@
+import CastImage from "@/components/Movies/CastImage";
 import { UseHomeCinema } from "@/context/HomeCinemaContext";
+import { useMovieDetails } from "@/hooks/useMovies";
+import { formatRuntime, getTrailer } from "@/utils";
+import { getTmdbImage } from "@/utils/tmdb";
+import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import { HiChevronLeft } from "react-icons/hi";
-import { SiAppletv, SiNetflix, SiPrimevideo } from "react-icons/si";
-import { TbBrandDisney } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
+import { IoFilmOutline } from "react-icons/io5";
+import { useNavigate, useParams } from "react-router-dom";
+import ErrorScreen from "../Error/Error";
+import LoadingScreen from "../Loading/Loading";
 
 const MovieDetailScreen = () => {
+	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	const { setShowTrailerModal } = UseHomeCinema();
+	const { setShowTrailerModal, setTrailer } = UseHomeCinema();
+	const [imgError, setImgError] = useState(false);
 
-	const providers = [
-		{ name: "Netflix", icon: <SiNetflix />, color: "hover:text-[#E50914]" },
-		{
-			name: "Prime Video",
-			icon: <SiPrimevideo />,
-			color: "hover:text-[#00A8E1]",
-		},
-		{ name: "Apple TV", icon: <SiAppletv />, color: "hover:text-white" },
-		{ name: "Disney+", icon: <TbBrandDisney />, color: "hover:text-[#0063E5]" },
-	];
+	const Placeholder = (
+		<div className='absolute inset-0 flex flex-col items-center justify-center bg-slate-950'>
+			<div className='absolute w-20 h-20 bg-teal-500/10 blur-2xl rounded-full' />
+
+			<div className='relative z-10 flex flex-col items-center -mt-50 text-6xl'>
+				<IoFilmOutline className='text-teal-500/30 mb-2 transform group-hover:scale-110 transition-transform duration-700' />
+				<span className='text-[8px] uppercase tracking-widest text-white/50 font-bold'>
+					No Preview
+				</span>
+			</div>
+		</div>
+	);
+
+	const { data: movie, isLoading, error } = useMovieDetails(id);
+
+	if (isLoading) return <LoadingScreen />;
+
+	if (error || !movie) {
+		return (
+			<ErrorScreen
+				message="The cinematic universe couldn't find this page."
+				onBack={() => navigate("/")}
+			/>
+		);
+	}
+
+	const getUSProviders = () => {
+		const usData = movie["watch/providers"]?.results?.["US"];
+		if (!usData) return [];
+
+		// Combine Streaming (flatrate), Rent, and Buy
+		const all = [
+			...(usData.flatrate || []),
+			...(usData.rent || []),
+			...(usData.buy || []),
+		];
+
+		// Unique by provider_id and Sort by TMDB priority
+		return Array.from(new Map(all.map((p) => [p.provider_id, p])).values())
+			.sort((a: any, b: any) => a.display_priority - b.display_priority)
+			.slice(0, 6); // Keep it clean, show top 6
+	};
+
+	const movieProviders = getUSProviders();
+	const tmdbWatchLink = movie["watch/providers"]?.results?.["US"]?.link;
+
+	const casts = movie.credits?.cast?.slice(0, 10) || [];
+	const trailer = getTrailer(movie.videos?.results);
+	const isReleased = new Date(movie.release_date) <= new Date();
 
 	return (
 		<div
 			className='min-h-svh w-full relative'
 			style={{
-				backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg')`,
+				backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${
+					getTmdbImage(movie.poster_path, "original") || ""
+				})`,
 				backgroundSize: "cover",
 				backgroundPosition: "center",
 				backgroundAttachment: "fixed",
@@ -42,21 +91,24 @@ const MovieDetailScreen = () => {
 				<div className='md:w-[80%] mx-auto flex flex-col items-center lg:items-start lg:flex-row gap-5 lg:gap-10'>
 					<div
 						className={`relative w-60 md:w-75 aspect-2/3 shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border border-white/30transition-all duration-700 ease-in-out transform-gpu flex items-center justify-center flex-1`}>
-						{/* Base Image */}
-						<img
-							src={
-								"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg"
-							}
-							alt={"Spongebob"}
-							className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
-						/>
-						<img
-							src={
-								"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg"
-							}
-							alt={"Spongebob"}
-							className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out group-hover:scale-110'
-						/>
+						{imgError ? (
+							Placeholder
+						) : (
+							<>
+								<img
+									src={getTmdbImage(movie.poster_path, "original") || ""}
+									alt={movie.title}
+									onError={() => setImgError(true)}
+									className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
+								/>
+								<img
+									src={getTmdbImage(movie.backdrop_path, "original") || ""}
+									alt={movie.title}
+									className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out group-hover:scale-110'
+								/>
+							</>
+						)}
+
 						{/* Premium Scrim (Bottom Gradient) */}
 						<div className='absolute inset-0 bg-linear-to-b from-transparent via-black/60 to-black z-10' />
 
@@ -66,7 +118,13 @@ const MovieDetailScreen = () => {
 								<span>Add to Bookmarks</span>
 							</button>
 							<button
-								onClick={() => setShowTrailerModal(true)}
+								onClick={() => {
+									setTrailer({
+										title: movie.title,
+										url: `https://www.youtube.com/embed/${trailer?.key}`,
+									});
+									setShowTrailerModal(true);
+								}}
 								className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm font-normal hover:bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm'>
 								<FaPlay />
 								<span>Watch Trailer</span>
@@ -75,7 +133,7 @@ const MovieDetailScreen = () => {
 					</div>
 					<div className='flex flex-col gap-2 flex-1 w-[95%] lg:w-[50%]'>
 						<h1 className='text-[1.7rem] leading-8 lg:text-[2.6rem] lg:leading-12 font-bold text-center lg:text-left drop-shadow-[0_2px_1px_rgba(0,0,0,0.8)] [text-shadow:0px_1px_0px_rgba(255,255,255,0.4)]'>
-							Demon Slayer: Kimetsu no Yaiba Infinity Castle
+							{movie.title}
 						</h1>
 
 						<div className='mt-3'>
@@ -83,26 +141,30 @@ const MovieDetailScreen = () => {
 								Overview
 							</p>
 							<p className='font-extralight tracking-wide text-[10px] md:text-xs font-plus-jakarta leading-[1.3rem]'>
-								A listless Wade Wilson toils away in civilian life with his days
-								as the morally flexible mercenary, Deadpool, behind him. But
-								when his homeworld faces an existential threat, Wade must
-								reluctantly suit-up again with an even more reluctant Wolverine.
-								A listless Wade Wilson toils away in civilian life with his days
-								as the morally flexible mercenary, Deadpool, behind him. But
-								when his homeworld faces an existential threat, Wade must
-								reluctantly suit-up again with an even more reluctant Wolverine.
+								{movie.overview}
 							</p>
 						</div>
 
 						<div className='flex items-center flex-wrap gap-3 text-white text-[10px] md:text-xs tracking-wide font-medium'>
-							<span>2025</span>
+							<span>{new Date(movie.release_date).getFullYear()}</span>
 							<span className='w-1 h-1 bg-white/50 rounded-full' />
-							<span>Oct 14</span>
+							<span>
+								{new Intl.DateTimeFormat("en-US", {
+									month: "short",
+									day: "numeric",
+								}).format(new Date(movie.release_date))}
+							</span>
 							<span className='w-1 h-1 bg-white/50 rounded-full' />
 							<div className='flex items-center gap-1 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm font-normal threed-effect'>
 								<span className='text-yellow-500 text-[10px]'>★</span>
-								<span className='text-white'>8.4</span>
+								<span className='text-white'>
+									{movie.vote_average.toFixed(1)}
+								</span>
 							</div>
+							<span className='w-1 h-1 bg-white/50 rounded-full' />
+							<span className='text-white font-semibold'>
+								{formatRuntime(movie.runtime)}
+							</span>
 							<span className='w-1 h-1 bg-white/50 rounded-full' />
 							<span className='text-teal-400 font-semibold'>Ultra HD</span>
 						</div>
@@ -112,15 +174,13 @@ const MovieDetailScreen = () => {
 								Genre
 							</p>
 							<div className='flex items-center gap-1 text-[10px] md:text-xs'>
-								<button className='relative z-20 flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm font-normal threed-effect'>
-									<span>Action</span>
-								</button>
-								<button className='relative z-20 flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm font-normal threed-effect'>
-									<span>Fantasy</span>
-								</button>
-								<button className='relative z-20 flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm font-normal threed-effect'>
-									<span>Shounen</span>
-								</button>
+								{movie.genres.map((genre: { id: number; name: string }) => (
+									<button
+										key={genre.id}
+										className='relative z-20 flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm font-normal threed-effect'>
+										<span>{genre.name}</span>
+									</button>
+								))}
 							</div>
 						</div>
 
@@ -129,59 +189,55 @@ const MovieDetailScreen = () => {
 								Cast
 							</p>
 							<div className='flex items-start gap-2 overflow-x-auto no-scrollbar w-full text-xs text-center font-medium'>
-								<div className='flex flex-col gap-1 items-center w-25 shrink-0'>
-									<img
-										src='https://image.tmdb.org/t/p/w300//8s8owcKmpRAuhzEGjSdRpztthUg.jpg'
-										alt='Cast'
-										className='w-25 h-30 object-cover rounded-xl border border-white/10'
-									/>
-									<p>Takahiru Sakurai</p>
-								</div>
-								<div className='flex flex-col gap-1 items-center w-25 shrink-0'>
-									<img
-										src='https://image.tmdb.org/t/p/w300//nuok8ueG7k9hPZ09Tpr8e7Qn0ah.jpg'
-										alt='Cast'
-										className='w-25 h-30 object-cover rounded-xl border border-white/10'
-									/>
-									<p>Mamoru Miyano</p>
-								</div>
-								<div className='flex flex-col gap-1 items-center w-25 shrink-0'>
-									<img
-										src='https://image.tmdb.org/t/p/w300//lUR5oN1LrqGgp25IOcI1qOH1Ud5.jpg'
-										alt='Cast'
-										className='w-25 h-30 object-cover rounded-xl border border-white/10'
-									/>
-									<p>Yoshimasa Hosoya</p>
-								</div>
+								{casts.map((cast: any) => (
+									<div
+										key={cast.id}
+										className='flex flex-col gap-1 items-center w-25 shrink-0'>
+										<CastImage path={cast.profile_path} name={cast.name} />
+										<p>{cast.name}</p>
+									</div>
+								))}
 							</div>
 						</div>
 						<div className='mt-3'>
-							<p className='capitalize tracking-normal text-xs md:text-sm font-normal mb-1'>
+							<p className='capitalize tracking-normal text-xs md:text-sm font-normal mb-2'>
 								Available to Watch On
 							</p>
-							<div className='flex flex-wrap items-center gap-1'>
-								{providers.map((provider) => (
-									<button
-										key={provider.name}
-										className={`
-              group relative z-20 flex items-center gap-2 px-4 py-2 
-              rounded-full cursor-pointer threed-effect bg-white/5 backdrop-blur-md 
-              border border-white/10 text-white/80
-              transition-all duration-500 ease-in-out
-              hover:bg-white/10 hover:border-white/30 hover:scale-102 active:scale-95
-              ${provider.color}
-            `}>
-										<span className='text-lg transition-transform duration-500 group-hover:scale-110'>
-											{provider.icon}
-										</span>
-										<span className='text-[10px] font-medium tracking-wide text-white'>
-											{provider.name}
-										</span>
-
-										{/* Subtle Inner Glow on Hover */}
-										<div className='absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-md bg-current transition-opacity duration-500' />
-									</button>
-								))}
+							<div className='flex flex-wrap items-center gap-2'>
+								{movieProviders.length > 0 ? (
+									movieProviders.map((provider: any) => (
+										<a
+											key={provider.provider_id}
+											href={tmdbWatchLink}
+											target='_blank'
+											rel='noopener noreferrer'
+											className={`
+                                            group relative z-20 flex items-center gap-2 px-3 py-1.5 
+                                            rounded-full cursor-pointer threed-effect bg-white/5 backdrop-blur-md 
+                                            border border-white/10 text-white/80
+                                            transition-all duration-500 ease-in-out
+                                            hover:bg-white/10 hover:border-white/30 hover:scale-105
+                                        `}>
+											<div className='w-5 h-5 rounded-md overflow-hidden shrink-0 shadow-md transition-transform duration-500 group-hover:scale-110'>
+												<img
+													src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+													alt={provider.provider_name}
+													className='w-full h-full object-cover'
+												/>
+											</div>
+											<span className='text-[10px] font-medium tracking-wide text-white'>
+												{provider.provider_name}
+											</span>
+										</a>
+									))
+								) : (
+									<p className='text-xs text-white/60 flex items-center gap-1'>
+										<IoFilmOutline />{" "}
+										{!isReleased
+											? "Coming soon to theaters"
+											: "Streaming information unavailable"}
+									</p>
+								)}
 							</div>
 						</div>
 					</div>

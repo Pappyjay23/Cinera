@@ -6,21 +6,32 @@ import {
 	useState,
 } from "react";
 
-type Movie = {
+export type HeroMovie = {
 	id: number;
 	title: string;
 	bg: string;
+	description?: string;
+	releaseDate?: string;
+	genres?: string[];
+};
+
+type Trailer = {
+	title: string;
+	url: string;
 };
 
 interface HomeCinemaContextType {
-	activeMovie: Movie;
-	nextMovie: Movie;
+	activeMovie: HeroMovie | null;
+	nextMovie: HeroMovie | null;
 	activeIndex: number;
 	handleNext: () => void;
 	isTransitioning: boolean;
-	heroMovies: Movie[];
+	heroMovies: HeroMovie[];
+	setHeroMovies: React.Dispatch<React.SetStateAction<HeroMovie[]>>;
 	showTrailerModal: boolean;
 	setShowTrailerModal: React.Dispatch<React.SetStateAction<boolean>>;
+	trailer: Trailer;
+	setTrailer: React.Dispatch<React.SetStateAction<Trailer>>;
 }
 
 const HomeCinemaContext = createContext<HomeCinemaContextType | undefined>(
@@ -28,35 +39,25 @@ const HomeCinemaContext = createContext<HomeCinemaContextType | undefined>(
 );
 
 export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
-	const heroMovies = [
-		{
-			id: 1,
-			title: "jujutsu kaisen war arc shibuya district",
-			bg: "https://image.tmdb.org/t/p/original//pAyImoslSnpMgjRwhaS5ZEdl8UI.jpg",
-		},
-		{
-			id: 2,
-			title: "attack on titan final season",
-			bg: "https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
-		},
-		{
-			id: 3,
-			title: "demon slayer infinity castle",
-			bg: "https://image.tmdb.org/t/p/original//qCOGGi8JBVEZMc3DVby8rUivyXz.jpg",
-		},
-	];
+	const [heroMovies, setHeroMovies] = useState<HeroMovie[]>([]);
 
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [isTransitioning, setIsTransitioning] = useState(false);
 
-	const activeMovie = heroMovies[activeIndex];
-	const nextIndex = (activeIndex + 1) % heroMovies.length;
-	const nextMovie = heroMovies[nextIndex];
+	const activeMovie = heroMovies.length > 0 ? heroMovies[activeIndex] : null;
+	const nextIndex =
+		heroMovies.length > 0 ? (activeIndex + 1) % heroMovies.length : 0;
+	const nextMovie = heroMovies.length > 0 ? heroMovies[nextIndex] : null;
 
+	const [trailer, setTrailer] = useState<Trailer>({
+		title: "",
+		url: "",
+	});
 	const [showTrailerModal, setShowTrailerModal] = useState(false);
 
 	const handleNext = () => {
-		if (isTransitioning) return;
+		if (isTransitioning || heroMovies.length === 0) return;
+
 		setIsTransitioning(true);
 
 		setTimeout(() => {
@@ -67,9 +68,10 @@ export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
 
 	// Auto-rotate (premium feel)
 	useEffect(() => {
+		if (heroMovies.length === 0) return;
 		const timer = setInterval(handleNext, 10000);
 		return () => clearInterval(timer);
-	}, [activeIndex]);
+	}, [activeIndex, heroMovies.length]);
 
 	return (
 		<HomeCinemaContext.Provider
@@ -80,8 +82,11 @@ export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
 				handleNext,
 				isTransitioning,
 				heroMovies,
+				setHeroMovies,
 				setShowTrailerModal,
 				showTrailerModal,
+				trailer,
+				setTrailer,
 			}}>
 			{children}
 		</HomeCinemaContext.Provider>
