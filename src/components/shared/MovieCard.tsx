@@ -1,3 +1,4 @@
+import { movieService } from "@/api/movieService";
 import { UseHomeCinema } from "@/context/HomeCinemaContext";
 import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
@@ -11,6 +12,7 @@ interface MovieCardProps {
 	genre: string;
 	size?: "sm" | "lg";
 	type?: string;
+	id?: number;
 }
 
 const MovieCard = ({
@@ -21,12 +23,33 @@ const MovieCard = ({
 	hoverImage,
 	type,
 	size = "sm",
+	id,
 }: MovieCardProps) => {
-	const { setShowTrailerModal } = UseHomeCinema();
+	const { setShowTrailerModal, setTrailer } = UseHomeCinema();
 	const [imgError, setImgError] = useState(false);
+	const [isImageLoading, setIsImageLoading] = useState(true);
 
-	const containerClasses =
-		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[140px] md:w-[220px]";
+	const handlePlayTrailer = async (movieId: string) => {
+		try {
+			const trailer = await movieService.getTrailer(movieId);
+			if (trailer?.key) {
+				setTrailer({
+					title: title || trailer.name,
+					url: `https://www.youtube.com/embed/${trailer.key}`,
+				});
+				setShowTrailerModal(true);
+			} else {
+				alert("Trailer not available");
+			}
+		} catch (error) {
+			console.error("Failed to load trailer", error);
+		}
+	};
+
+	const dimensions =
+		size === "sm"
+			? "w-[140px] md:w-[180px] h-[210px] md:h-[270px]"
+			: "w-[140px] md:w-[220px] h-[210px] md:h-[330px]";
 
 	const Placeholder = (
 		<div className='absolute inset-0 flex flex-col items-center justify-center bg-slate-950'>
@@ -46,7 +69,15 @@ const MovieCard = ({
 
 	return (
 		<div
-			className={`relative ${containerClasses} aspect-2/3 shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border ${imgError ? "border-white/10":"border-white/30"} transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
+			className={`relative ${dimensions} shrink-0 rounded-2xl overflow-hidden cursor-pointer bg-[#053330] shadow-xl group border ${
+				imgError ? "border-white/10" : "border-white/30"
+			} transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
+			{isImageLoading && !imgError && (
+				<div className='absolute inset-0 z-40 bg-slate-900 overflow-hidden'>
+					<div className='absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/5 to-transparent animate-[shimmer_2s_infinite]' />
+				</div>
+			)}
+
 			{!image || imgError ? (
 				Placeholder
 			) : (
@@ -54,8 +85,17 @@ const MovieCard = ({
 					<img
 						src={image}
 						alt={title}
-						onError={() => setImgError(true)}
-						className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
+						onLoad={() => setIsImageLoading(false)}
+						onError={() => {
+							setImgError(true);
+							setIsImageLoading(false);
+						}}
+						className={`absolute inset-0 w-full h-full object-cover will-change-transform transition-all duration-700 ease-in-out group-hover:scale-110 
+                        ${
+													isImageLoading
+														? "opacity-0"
+														: "opacity-100 group-hover:opacity-0"
+												}`}
 					/>
 					<img
 						src={hoverImage || image}
@@ -77,7 +117,7 @@ const MovieCard = ({
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									setShowTrailerModal(true);
+									handlePlayTrailer(String(id));
 								}}
 								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay
@@ -123,7 +163,7 @@ const MovieCard = ({
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									setShowTrailerModal(true);
+									handlePlayTrailer(String(id));
 								}}
 								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlay

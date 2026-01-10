@@ -97,7 +97,6 @@ const SearchScreen = () => {
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
 		},
-		
 	];
 
 	return (
@@ -124,6 +123,7 @@ const SearchScreen = () => {
 						{movies.map((movie) => (
 							<Link to={`/movie/${movie.id}`} key={movie.id}>
 								<MovieCard
+									id={movie.id}
 									size='lg'
 									genre={movie.genre}
 									image={movie.image}

@@ -44,3 +44,9 @@ export const getTrailer = (videos: any[]) => {
 	// 3. Last resort: Fallback to "Teaser"
 	return videos.find((v) => v.type === "Teaser") || videos[0];
 };
+
+export const getDynamicDate = (yearsBack: number) => {
+	const date = new Date();
+	date.setFullYear(date.getFullYear() - yearsBack);
+	return date.toISOString().split("T")[0];
+};

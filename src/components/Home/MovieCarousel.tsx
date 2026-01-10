@@ -69,6 +69,11 @@ const MovieCarousel = ({
 		}
 	};
 
+	const dimensions =
+		size === "sm"
+			? "min-h-[210px] md:min-h-[270px]"
+			: "min-h-[210px] md:min-h-[330px]";
+
 	return (
 		<div className='flex flex-col group/carousel'>
 			{title && (
@@ -105,12 +110,13 @@ const MovieCarousel = ({
 				)}
 				<div
 					ref={scrollRef}
-					className={`relative flex gap-3 items-center overflow-x-scroll py-4 w-full no-scrollbar ${
+					className={`relative flex gap-3 items-center overflow-x-scroll py-4 w-full no-scrollbar ${dimensions} ${
 						isLoading ? "opacity-0 z-1" : "opacity-100 z-2"
 					} transition-all duration-700 ease-in-out`}>
 					{movies.map((movie) => (
 						<Link to={`/movie/${movie.id}`} key={movie.id}>
 							<MovieCard
+								id={movie.id}
 								size={size}
 								genre={movie.genre}
 								image={movie.image}

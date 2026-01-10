@@ -1,4 +1,4 @@
-import { getTrailer } from "@/utils";
+import { getDynamicDate, getTrailer } from "@/utils";
 import axiosInstance from "./axiosInstance";
 
 export const movieService = {
@@ -29,5 +29,28 @@ export const movieService = {
 	getTrailer: async (id: string) => {
 		const { data } = await axiosInstance.get(`/movie/${id}/videos`);
 		return getTrailer(data.results);
+	},
+	getUpcoming: async () => {
+		const { data } = await axiosInstance.get("/movie/upcoming");
+		return data.results;
+	},
+
+	getModernClassics: async () => {
+		const { data } = await axiosInstance.get("/discover/movie", {
+			params: {
+				"vote_count.gte": 1000,
+				"vote_average.gte": 7.5,
+				"primary_release_date.gte": getDynamicDate(6),
+				sort_by: "vote_average.desc",
+			},
+		});
+		return data.results;
+	},
+
+	getPopularByGenre: async (genreId: number) => {
+		const { data } = await axiosInstance.get("/discover/movie", {
+			params: { with_genres: genreId, sort_by: "popularity.desc" },
+		});
+		return data.results;
 	},
 };
