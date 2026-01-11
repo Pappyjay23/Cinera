@@ -110,7 +110,7 @@ const MovieCarousel = ({
 				)}
 				<div
 					ref={scrollRef}
-					className={`relative flex gap-3 items-center overflow-x-scroll py-4 w-full no-scrollbar ${dimensions} ${
+					className={`relative flex gap-3 items-center overflow-x-scroll overflow-y-hidden my-4 w-full no-scrollbar ${dimensions} ${
 						isLoading ? "opacity-0 z-1" : "opacity-100 z-2"
 					} transition-all duration-700 ease-in-out`}>
 					{movies.map((movie) => (
