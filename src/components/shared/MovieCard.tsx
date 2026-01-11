@@ -3,6 +3,7 @@ import { UseHomeCinema } from "@/context/HomeCinemaContext";
 import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import { IoFilmOutline, IoTrashOutline } from "react-icons/io5";
+import MovieCardSkeleton from "./MovieCardSkeleton";
 
 interface MovieCardProps {
 	title: string;
@@ -74,7 +75,7 @@ const MovieCard = ({
 			} transition-all duration-700 ease-in-out transform-gpu active:[&:not(:has(button:hover))]:scale-95`}>
 			{isImageLoading && !imgError && (
 				<div className='absolute inset-0 z-40 bg-slate-900 overflow-hidden'>
-					<div className='absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/5 to-transparent animate-[shimmer_2s_infinite]' />
+					<MovieCardSkeleton size={size} />
 				</div>
 			)}
 

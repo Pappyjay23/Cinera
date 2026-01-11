@@ -1,10 +1,12 @@
 const MovieCardSkeleton = ({ size = "sm" }: { size?: "sm" | "lg" }) => {
-	const containerClasses =
-		size === "sm" ? "w-[140px] md:w-[180px]" : "w-[140px] md:w-[220px]";
+	const dimensions =
+		size === "sm"
+			? "w-[140px] md:w-[180px] h-[210px] md:h-[270px]"
+			: "w-[140px] md:w-[220px] h-[210px] md:h-[330px]";
 
 	return (
 		<div
-			className={`relative ${containerClasses} aspect-2/3 shrink-0 rounded-2xl overflow-hidden bg-[#053330]/50 border border-white/10`}>
+			className={`relative ${dimensions} aspect-2/3 shrink-0 rounded-2xl overflow-hidden bg-[#053330]/50 border border-white/10`}>
 			{/* The Shimmer Effect */}
 			<div className='absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-linear-to-r from-transparent via-white/5 to-transparent z-0' />
 

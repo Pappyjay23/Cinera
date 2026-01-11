@@ -7,7 +7,7 @@ import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import { HiChevronLeft } from "react-icons/hi";
 import { IoFilmOutline } from "react-icons/io5";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ErrorScreen from "../Error/Error";
 import LoadingScreen from "../Loading/Loading";
 
@@ -16,6 +16,16 @@ const MovieDetailScreen = () => {
 	const navigate = useNavigate();
 	const { setShowTrailerModal, setTrailer } = UseHomeCinema();
 	const [imgError, setImgError] = useState(false);
+
+	const location = useLocation();
+
+	const handleBack = () => {
+		if (location.key === "default") {
+			navigate("/");
+		} else {
+			navigate(-1);
+		}
+	};
 
 	const Placeholder = (
 		<div className='absolute inset-0 flex flex-col items-center justify-center bg-slate-950'>
@@ -82,7 +92,7 @@ const MovieDetailScreen = () => {
 
 			<div className='px-4 md:px-6 z-10 relative h-svh overflow-y-auto pt-20 pb-35 md:pb-80 xl:pb-50 [@media(min-width:2000px)]:pb-180'>
 				<div
-					onClick={() => navigate(-1)}
+					onClick={handleBack}
 					className='flex gap-1 items-center text-sm md:text-base font-medium cursor-pointer mb-4'>
 					<HiChevronLeft />
 					<p>Go back</p>
@@ -173,7 +183,7 @@ const MovieDetailScreen = () => {
 							<p className='capitalize tracking-normal text-xs md:text-sm font-normal mb-1'>
 								Genre
 							</p>
-							<div className='flex items-center gap-1 text-[10px] md:text-xs'>
+							<div className='flex items-center gap-1 text-[10px] md:text-xs flex-wrap'>
 								{movie.genres.map((genre: { id: number; name: string }) => (
 									<button
 										key={genre.id}
