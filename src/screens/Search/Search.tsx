@@ -1,103 +1,34 @@
 import EmptyResult from "@/components/Search/EmptyResult";
 import MovieCard from "@/components/shared/MovieCard";
 import MovieCardSkeleton from "@/components/shared/MovieCardSkeleton";
-import { useEffect, useState } from "react";
+import { UseAppContext } from "@/context/AppCinemaContext";
+import { useSearch } from "@/hooks/useSearch";
+import { useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
+import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
 
 const SearchScreen = () => {
-	const [isLoading, setIsLoading] = useState(true);
+	const { searchQuery, setSearchQuery } = UseAppContext();
+	const { ref, inView } = useInView();
+	const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+		useSearch(searchQuery);
+
+	const movies = data?.pages.flatMap((page) => page.results) || [];
+
+	const lastPage = data?.pages[data.pages.length - 1];
+	const hasMoviesOnLastPage = lastPage ? lastPage.pageItemsCount > 0 : false;
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			setIsLoading(false);
-		}, 2000);
-
-		return () => clearTimeout(timer);
-	}, []);
-
-	const movies = [
-		{
-			id: 1,
-			title: "The Spongebob Movie: Sponge on the Run",
-			year: "2025",
-			genre: "Fantasy",
-			image:
-				"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
-		},
-		{
-			id: 2,
-			title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle",
-			year: "2025",
-			genre: "Fantasy",
-			image:
-				"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
-		},
-		{
-			id: 3,
-			title: "Now You See Me: Now You Don't",
-			year: "2025",
-			genre: "Magic",
-			image:
-				"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
-		},
-		{
-			id: 4,
-			title: "Avatar: The Last Airbender",
-			year: "2005",
-			genre: "Action",
-			image:
-				"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
-		},
-		{
-			id: 5,
-			title: "The Spongebob Movie: Sponge on the Run",
-			year: "2025",
-			genre: "Fantasy",
-			image:
-				"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
-		},
-		{
-			id: 6,
-			title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle",
-			year: "2025",
-			genre: "Fantasy",
-			image:
-				"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
-		},
-		{
-			id: 7,
-			title: "Now You See Me: Now You Don't",
-			year: "2025",
-			genre: "Magic",
-			image:
-				"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
-		},
-		{
-			id: 8,
-			title: "Avatar: The Last Airbender",
-			year: "2005",
-			genre: "Action",
-			image:
-				"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
-			hoverImage:
-				"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
-		},
-	];
+		// Only fetch if:
+		// 1. Element is in view
+		// 2. There is a next page
+		// 3. We aren't already loading
+		// 4. THE LAST PAGE ACTUALLY HAD CONTENT (Prevents the "Ghost Page" loop)
+		if (inView && hasNextPage && !isFetchingNextPage && hasMoviesOnLastPage) {
+			fetchNextPage();
+		}
+	}, [inView, hasNextPage, isFetchingNextPage, hasMoviesOnLastPage]);
 
 	return (
 		<div className='overflow-hidden w-full pt-15 md:pt-20 pb-8 bg-black/40 backdrop-blur-xs px-4 md:px-6'>
@@ -107,6 +38,8 @@ const SearchScreen = () => {
 					<div className='h-5 w-px bg-white/20 rounded-full'></div>
 					<input
 						type='text'
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
 						className='outline-none border-0 w-full text-white placeholder:text-white'
 						placeholder='Search for a Movie or TV Series'
 						autoFocus
@@ -121,7 +54,7 @@ const SearchScreen = () => {
 							isLoading ? "opacity-0 z-1" : "opacity-100 z-2"
 						} transition-all duration-700 ease-in-out`}>
 						{movies.map((movie) => (
-							<Link to={`/movie/${movie.id}`} key={movie.id}>
+							<Link to={`/${movie.mediaType}/${movie.id}`} key={movie.id}>
 								<MovieCard
 									id={movie.id}
 									size='lg'
@@ -130,9 +63,28 @@ const SearchScreen = () => {
 									hoverImage={movie.hoverImage}
 									title={movie.title}
 									year={movie.year}
+									mediaType={movie.mediaType}
 								/>
 							</Link>
 						))}
+						{hasNextPage && hasMoviesOnLastPage && (
+							<div
+								ref={ref}
+								className='w-full h-px flex justify-center items-center'>
+								{isFetchingNextPage && <></>}
+							</div>
+						)}
+						{/* Infinite Scroll Trigger */}
+						{hasNextPage && hasMoviesOnLastPage && (
+							<div className='w-full flex justify-center py-10'>
+								<button
+									onClick={() => fetchNextPage()}
+									disabled={isFetchingNextPage}
+									className='text-xs cursor-pointer px-8 py-3 rounded-full bg-teal-600 text-white font-medium hover:bg-teal-500 transition-all duration-700 ease-in-out active:scale-95 disabled:opacity-50'>
+									{isFetchingNextPage ? "Loading more..." : "Load More Results"}
+								</button>
+							</div>
+						)}
 					</div>
 
 					<div
@@ -147,7 +99,7 @@ const SearchScreen = () => {
 					</div>
 				</div>
 			) : (
-				<EmptyResult />
+				!isLoading && !movies.length && <EmptyResult />
 			)}
 		</div>
 	);

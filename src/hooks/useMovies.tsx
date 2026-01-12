@@ -1,4 +1,5 @@
 import { movieService } from "@/api/movieService";
+import { getTmdbImage } from "@/utils/tmdb";
 import { useQuery } from "@tanstack/react-query";
 
 const transformMovieData = (results: any[], genreMap: any) => {
@@ -6,9 +7,9 @@ const transformMovieData = (results: any[], genreMap: any) => {
 		id: movie.id,
 		title: movie.title,
 		year: movie.release_date ? movie.release_date.split("-")[0] : "N/A",
-		genre: movie.genre_ids?.map((id: number) => genreMap?.[id])[0] || "Action",
-		image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-		hoverImage: `https://image.tmdb.org/t/p/original${movie.backdrop_path}`,
+		genre: movie.genre_ids?.map((id: number) => genreMap?.[id])[0] || "N/A",
+		image: getTmdbImage(movie.poster_path, "medium"),
+		hoverImage: getTmdbImage(movie.backdrop_path, "medium"),
 	}));
 };
 
@@ -40,11 +41,14 @@ export const useTrendingMovies = () => {
 	});
 };
 
-export const useMovieDetails = (id: string | undefined) => {
+export const useMediaDetails = (
+	type: string | undefined,
+	id: string | undefined
+) => {
 	return useQuery({
-		queryKey: ["movie", id],
-		queryFn: () => movieService.getMovieDetails(id!),
-		enabled: !!id, // Only run if id is provided
+		queryKey: ["details", type, id],
+		queryFn: () => movieService.getDetails(type!, id!),
+		enabled: !!id && !!type,
 		staleTime: 1000 * 60 * 30, // 30 mins
 	});
 };

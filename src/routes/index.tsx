@@ -22,6 +22,7 @@ const routes: AppRoute[] = [
 			{ path: "/", element: <HomeScreen /> },
 			{ path: "/search", element: <SearchScreen /> },
 			{ path: "/movie/:id", element: <MovieDetailScreen /> },
+			{ path: "/tv/:id", element: <MovieDetailScreen /> },
 			{ path: "/movies", element: <MoviesScreen /> },
 			{ path: "/watchlist", element: <BookmarksScreen /> },
 		],

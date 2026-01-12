@@ -20,7 +20,7 @@ type Trailer = {
 	url: string;
 };
 
-interface HomeCinemaContextType {
+interface AppCinemaContextType {
 	activeMovie: HeroMovie | null;
 	nextMovie: HeroMovie | null;
 	activeIndex: number;
@@ -32,13 +32,15 @@ interface HomeCinemaContextType {
 	setShowTrailerModal: React.Dispatch<React.SetStateAction<boolean>>;
 	trailer: Trailer;
 	setTrailer: React.Dispatch<React.SetStateAction<Trailer>>;
+	searchQuery: string;
+	setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const HomeCinemaContext = createContext<HomeCinemaContextType | undefined>(
+const AppCinemaContext = createContext<AppCinemaContextType | undefined>(
 	undefined
 );
 
-export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
+export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 	const [heroMovies, setHeroMovies] = useState<HeroMovie[]>([]);
 
 	const [activeIndex, setActiveIndex] = useState(0);
@@ -54,6 +56,8 @@ export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
 		url: "",
 	});
 	const [showTrailerModal, setShowTrailerModal] = useState(false);
+
+	const [searchQuery, setSearchQuery] = useState("");
 
 	const handleNext = () => {
 		if (isTransitioning || heroMovies.length === 0) return;
@@ -74,7 +78,7 @@ export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
 	}, [activeIndex, heroMovies.length]);
 
 	return (
-		<HomeCinemaContext.Provider
+		<AppCinemaContext.Provider
 			value={{
 				activeMovie,
 				nextMovie,
@@ -87,15 +91,17 @@ export const HomeCinemaProvider = ({ children }: { children: ReactNode }) => {
 				showTrailerModal,
 				trailer,
 				setTrailer,
+				searchQuery,
+				setSearchQuery,
 			}}>
 			{children}
-		</HomeCinemaContext.Provider>
+		</AppCinemaContext.Provider>
 	);
 };
 
-export const UseHomeCinema = () => {
-	const context = useContext(HomeCinemaContext);
+export const UseAppContext = () => {
+	const context = useContext(AppCinemaContext);
 	if (!context)
-		throw new Error("useCinema must be used within a CinemaProvider");
+		throw new Error("useAppCinema must be used within a CinemaProvider");
 	return context;
 };

@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import TrailerModal from "./components/shared/TrailerModal";
-import { UseHomeCinema } from "./context/HomeCinemaContext";
+import { UseAppContext } from "./context/AppCinemaContext";
 import useNetworkStatus from "./hooks/useNetworkStatus";
 import type { AppRoute } from "./routes";
 import routes from "./routes";
@@ -29,7 +29,7 @@ const renderRoute = (route: AppRoute) => {
 
 const App = () => {
 	const { isOnline } = useNetworkStatus();
-	const { showTrailerModal, setShowTrailerModal, trailer } = UseHomeCinema();
+	const { showTrailerModal, setShowTrailerModal, trailer } = UseAppContext();
 
 	if (!isOnline) {
 		return <OfflineScreen />;

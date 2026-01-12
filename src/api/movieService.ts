@@ -20,8 +20,9 @@ export const movieService = {
 		const { data } = await axiosInstance.get("/trending/movie/day");
 		return data.results;
 	},
-	getMovieDetails: async (id: string) => {
-		const { data } = await axiosInstance.get(`/movie/${id}`, {
+	getDetails: async (type: string, id: string) => {
+		// type will be either "movie" or "tv"
+		const { data } = await axiosInstance.get(`/${type}/${id}`, {
 			params: { append_to_response: "videos,credits,watch/providers" },
 		});
 		return data;
@@ -52,5 +53,12 @@ export const movieService = {
 			params: { with_genres: genreId, sort_by: "popularity.desc" },
 		});
 		return data.results;
+	},
+	getSearchResults: async (query: string, page: number = 1) => {
+		if (!query) return { results: [], total_pages: 0 };
+		const { data } = await axiosInstance.get("/search/multi", {
+			params: { query, include_adult: false, page },
+		});
+		return data;
 	},
 };

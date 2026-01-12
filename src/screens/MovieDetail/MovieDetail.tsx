@@ -1,6 +1,6 @@
 import CastImage from "@/components/Movies/CastImage";
-import { UseHomeCinema } from "@/context/HomeCinemaContext";
-import { useMovieDetails } from "@/hooks/useMovies";
+import { UseAppContext } from "@/context/AppCinemaContext";
+import { useMediaDetails } from "@/hooks/useMovies";
 import { formatRuntime, getTrailer } from "@/utils";
 import { getTmdbImage } from "@/utils/tmdb";
 import { useState } from "react";
@@ -14,7 +14,7 @@ import LoadingScreen from "../Loading/Loading";
 const MovieDetailScreen = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	const { setShowTrailerModal, setTrailer } = UseHomeCinema();
+	const { setShowTrailerModal, setTrailer } = UseAppContext();
 	const [imgError, setImgError] = useState(false);
 
 	const location = useLocation();
@@ -40,11 +40,13 @@ const MovieDetailScreen = () => {
 		</div>
 	);
 
-	const { data: movie, isLoading, error } = useMovieDetails(id);
+	const mediaType = window.location.pathname.split("/")[1];
+
+	const { data: media, isLoading, error } = useMediaDetails(mediaType, id);
 
 	if (isLoading) return <LoadingScreen />;
 
-	if (error || !movie) {
+	if (error || !media) {
 		return (
 			<ErrorScreen
 				message="The cinematic universe couldn't find this page."
@@ -54,7 +56,7 @@ const MovieDetailScreen = () => {
 	}
 
 	const getUSProviders = () => {
-		const usData = movie["watch/providers"]?.results?.["US"];
+		const usData = media["watch/providers"]?.results?.["US"];
 		if (!usData) return [];
 
 		// Combine Streaming (flatrate), Rent, and Buy
@@ -71,18 +73,29 @@ const MovieDetailScreen = () => {
 	};
 
 	const movieProviders = getUSProviders();
-	const tmdbWatchLink = movie["watch/providers"]?.results?.["US"]?.link;
+	const tmdbWatchLink = media["watch/providers"]?.results?.["US"]?.link;
 
-	const casts = movie.credits?.cast?.slice(0, 10) || [];
-	const trailer = getTrailer(movie.videos?.results);
-	const isReleased = new Date(movie.release_date) <= new Date();
+	const releaseDate = media.release_date || media.first_air_date;
+	const title = media.title || media.name;
+	const runtime =
+		mediaType === "movie" && media.runtime
+			? formatRuntime(media.runtime)
+			: mediaType === "tv" &&
+			  media.number_of_seasons &&
+			  `${media.number_of_seasons} ${
+					media.number_of_seasons === 1 ? "Season" : "Seasons"
+			  }`;
+
+	const casts = media.credits?.cast?.slice(0, 10) || [];
+	const trailer = getTrailer(media.videos?.results);
+	const isReleased = new Date(releaseDate) <= new Date();
 
 	return (
 		<div
 			className='min-h-svh w-full relative'
 			style={{
 				backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${
-					getTmdbImage(movie.poster_path, "original") || ""
+					getTmdbImage(media.poster_path, "medium") || ""
 				})`,
 				backgroundSize: "cover",
 				backgroundPosition: "center",
@@ -106,14 +119,14 @@ const MovieDetailScreen = () => {
 						) : (
 							<>
 								<img
-									src={getTmdbImage(movie.poster_path, "original") || ""}
-									alt={movie.title}
+									src={getTmdbImage(media.poster_path, "medium") || ""}
+									alt={title}
 									onError={() => setImgError(true)}
 									className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-100 group-hover:opacity-0 transition-all duration-700 ease-in-out group-hover:scale-110'
 								/>
 								<img
-									src={getTmdbImage(movie.backdrop_path, "original") || ""}
-									alt={movie.title}
+									src={getTmdbImage(media.backdrop_path, "original") || ""}
+									alt={title}
 									className='absolute inset-0 w-full h-full object-cover will-change-transform opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out group-hover:scale-110'
 								/>
 							</>
@@ -130,7 +143,7 @@ const MovieDetailScreen = () => {
 							<button
 								onClick={() => {
 									setTrailer({
-										title: movie.title,
+										title: title,
 										url: `https://www.youtube.com/embed/${trailer?.key}`,
 									});
 									setShowTrailerModal(true);
@@ -143,7 +156,7 @@ const MovieDetailScreen = () => {
 					</div>
 					<div className='flex flex-col gap-2 flex-1 w-[95%] lg:w-[50%]'>
 						<h1 className='text-[1.7rem] leading-8 lg:text-[2.6rem] lg:leading-12 font-bold text-center lg:text-left drop-shadow-[0_2px_1px_rgba(0,0,0,0.8)] [text-shadow:0px_1px_0px_rgba(255,255,255,0.4)]'>
-							{movie.title}
+							{title}
 						</h1>
 
 						<div className='mt-3'>
@@ -151,31 +164,41 @@ const MovieDetailScreen = () => {
 								Overview
 							</p>
 							<p className='font-extralight tracking-wide text-[10px] md:text-xs font-plus-jakarta leading-[1.3rem]'>
-								{movie.overview}
+								{media.overview ? media.overview : "No overview"}
 							</p>
 						</div>
 
 						<div className='flex items-center flex-wrap gap-3 text-white text-[10px] md:text-xs tracking-wide font-medium'>
-							<span>{new Date(movie.release_date).getFullYear()}</span>
-							<span className='w-1 h-1 bg-white/50 rounded-full' />
-							<span>
-								{new Intl.DateTimeFormat("en-US", {
-									month: "short",
-									day: "numeric",
-								}).format(new Date(movie.release_date))}
-							</span>
-							<span className='w-1 h-1 bg-white/50 rounded-full' />
+							{releaseDate && (
+								<>
+									<span>{new Date(releaseDate).getFullYear()}</span>
+									<span className='w-1 h-1 bg-white/50 rounded-full' />
+									<span>
+										{new Intl.DateTimeFormat("en-US", {
+											month: "short",
+											day: "numeric",
+										}).format(new Date(releaseDate))}
+									</span>
+									<span className='w-1 h-1 bg-white/50 rounded-full' />
+								</>
+							)}
 							<div className='flex items-center gap-1 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm font-normal threed-effect'>
 								<span className='text-yellow-500 text-[10px]'>★</span>
 								<span className='text-white'>
-									{movie.vote_average.toFixed(1)}
+									{media.vote_average.toFixed(1)}
 								</span>
 							</div>
 							<span className='w-1 h-1 bg-white/50 rounded-full' />
-							<span className='text-white font-semibold'>
-								{formatRuntime(movie.runtime)}
+							<span className='text-teal-400 font-semibold'>
+								{mediaType === "movie" ? "Movie" : "Tv Series"}
 							</span>
 							<span className='w-1 h-1 bg-white/50 rounded-full' />
+							{runtime && (
+								<>
+									<span className='text-white font-semibold'>{runtime}</span>
+									<span className='w-1 h-1 bg-white/50 rounded-full' />
+								</>
+							)}
 							<span className='text-teal-400 font-semibold'>Ultra HD</span>
 						</div>
 
@@ -184,13 +207,16 @@ const MovieDetailScreen = () => {
 								Genre
 							</p>
 							<div className='flex items-center gap-1 text-[10px] md:text-xs flex-wrap'>
-								{movie.genres.map((genre: { id: number; name: string }) => (
+								{media.genres.map((genre: { id: number; name: string }) => (
 									<button
 										key={genre.id}
 										className='relative z-20 flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-sm font-normal threed-effect'>
 										<span>{genre.name}</span>
 									</button>
 								))}
+								{media.genres.length === 0 && (
+									<p className='text-white/50'>No Genre available.</p>
+								)}
 							</div>
 						</div>
 
@@ -207,6 +233,9 @@ const MovieDetailScreen = () => {
 										<p>{cast.name}</p>
 									</div>
 								))}
+								{casts.length === 0 && (
+									<p className='text-white/50'>No Cast available.</p>
+								)}
 							</div>
 						</div>
 						<div className='mt-3'>

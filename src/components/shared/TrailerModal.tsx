@@ -35,6 +35,8 @@ const TrailerModal = ({
 		};
 	}, [isOpen]);
 
+	console.log(trailerUrl);
+
 	if (!isOpen) return null;
 
 	return (

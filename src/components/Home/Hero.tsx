@@ -1,4 +1,4 @@
-import { UseHomeCinema } from "@/context/HomeCinemaContext";
+import { UseAppContext } from "@/context/AppCinemaContext";
 import { useTrendingMovies } from "@/hooks/useMovies";
 import { formatReadableDate } from "@/utils";
 import { getTmdbImage } from "@/utils/tmdb";
@@ -23,7 +23,7 @@ const Hero = () => {
 		isTransitioning,
 		setShowTrailerModal,
 		setTrailer,
-	} = UseHomeCinema();
+	} = UseAppContext();
 
 	const textContainerRef = useRef<HTMLDivElement>(null);
 

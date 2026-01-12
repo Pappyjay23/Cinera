@@ -1,4 +1,4 @@
-import { UseHomeCinema } from "@/context/HomeCinemaContext";
+import { UseAppContext } from "@/context/AppCinemaContext";
 import { BiSolidMoviePlay } from "react-icons/bi";
 import { FaHome } from "react-icons/fa";
 import { IoBookmark, IoSearch } from "react-icons/io5";
@@ -29,7 +29,7 @@ const navItems = [
 ];
 
 const AppLayout = () => {
-	const { heroMovies, activeIndex } = UseHomeCinema();
+	const { heroMovies, activeIndex } = UseAppContext();
 
 	return (
 		<div className='relative h-svh flex justify-center items-center px-2 md:px-6'>

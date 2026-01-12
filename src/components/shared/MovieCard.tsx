@@ -1,5 +1,5 @@
 import { movieService } from "@/api/movieService";
-import { UseHomeCinema } from "@/context/HomeCinemaContext";
+import { UseAppContext } from "@/context/AppCinemaContext";
 import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import { IoFilmOutline, IoTrashOutline } from "react-icons/io5";
@@ -12,6 +12,7 @@ interface MovieCardProps {
 	hoverImage: string;
 	genre: string;
 	size?: "sm" | "lg";
+	mediaType?: "movie" | "tv";
 	type?: string;
 	id?: number;
 }
@@ -25,8 +26,9 @@ const MovieCard = ({
 	type,
 	size = "sm",
 	id,
+	mediaType,
 }: MovieCardProps) => {
-	const { setShowTrailerModal, setTrailer } = UseHomeCinema();
+	const { setShowTrailerModal, setTrailer } = UseAppContext();
 	const [imgError, setImgError] = useState(false);
 	const [isImageLoading, setIsImageLoading] = useState(true);
 
@@ -199,6 +201,14 @@ const MovieCard = ({
 					}`}>
 					<span className='text-white/60'>{year}</span>
 					<span className='w-1 h-1 bg-white/30 rounded-full' />
+					{mediaType && (
+						<>
+							<span className='text-white/60 flex items-center gap-1'>
+								{mediaType === "tv" ? "Tv Series" : "Movie"}
+							</span>
+							<span className='w-1 h-1 bg-white/30 rounded-full' />
+						</>
+					)}
 					<span className='text-teal-500 font-medium'>Ultra HD</span>
 				</div>
 			</div>
