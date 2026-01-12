@@ -20,6 +20,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 2,
@@ -30,6 +31,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 3,
@@ -40,6 +42,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 4,
@@ -50,6 +53,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 5,
@@ -60,6 +64,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 6,
@@ -70,6 +75,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 7,
@@ -80,6 +86,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 8,
@@ -90,6 +97,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 9,
@@ -100,6 +108,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 10,
@@ -110,6 +119,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 11,
@@ -120,6 +130,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
+			rating: "7.5",
 		},
 		{
 			id: 12,
@@ -130,6 +141,7 @@ const MoviesScreen = () => {
 				"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
 			hoverImage:
 				"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
+			rating: "7.5",
 		},
 	];
 	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);

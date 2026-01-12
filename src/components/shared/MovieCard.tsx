@@ -2,8 +2,10 @@ import { movieService } from "@/api/movieService";
 import { UseAppContext } from "@/context/AppCinemaContext";
 import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
-import { IoFilmOutline, IoTrashOutline } from "react-icons/io5";
+import { IoFilmOutline, IoStar, IoTrashOutline } from "react-icons/io5";
 import MovieCardSkeleton from "./MovieCardSkeleton";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface MovieCardProps {
 	title: string;
@@ -15,6 +17,7 @@ interface MovieCardProps {
 	mediaType?: "movie" | "tv";
 	type?: string;
 	id?: number;
+	rating: string;
 }
 
 const MovieCard = ({
@@ -26,15 +29,18 @@ const MovieCard = ({
 	type,
 	size = "sm",
 	id,
-	mediaType,
+	mediaType = "movie",
+	rating,
 }: MovieCardProps) => {
 	const { setShowTrailerModal, setTrailer } = UseAppContext();
 	const [imgError, setImgError] = useState(false);
 	const [isImageLoading, setIsImageLoading] = useState(true);
+	const navigate = useNavigate();
 
 	const handlePlayTrailer = async (movieId: string) => {
+		if (!movieId || !mediaType) return;
 		try {
-			const trailer = await movieService.getTrailer(movieId);
+			const trailer = await movieService.getTrailerById(mediaType, movieId);
 			if (trailer?.key) {
 				setTrailer({
 					title: title || trailer.name,
@@ -42,11 +48,22 @@ const MovieCard = ({
 				});
 				setShowTrailerModal(true);
 			} else {
-				alert("Trailer not available");
+				toast.error("Trailer not available");
 			}
 		} catch (error) {
+			toast.error("Failed to load trailer");
 			console.error("Failed to load trailer", error);
 		}
+	};
+
+	const handleAddToWatchlist = (movieTitle: string) => {
+		toast.success("Added to Watchlist", {
+			description: `${movieTitle} has been added to your library.`,
+			action: {
+				label: "View",
+				onClick: () => navigate("/watchlist"),
+			},
+		});
 	};
 
 	const dimensions =
@@ -152,6 +169,7 @@ const MovieCard = ({
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
+									handleAddToWatchlist(title);
 								}}
 								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
 								<FaPlus
@@ -194,22 +212,25 @@ const MovieCard = ({
 					{title}
 				</h3>
 				<div
-					className={`flex items-center gap-2 mt-1 ${
+					className={`flex items-center gap-2 flex-wrap mt-1 ${
 						size === "sm"
 							? "text-[8px] md:text-[10px]"
 							: "text-[8px] md:text-xs"
 					}`}>
-					<span className='text-white/60'>{year}</span>
+					<span className='text-white'>{year}</span>
 					<span className='w-1 h-1 bg-white/30 rounded-full' />
 					{mediaType && (
 						<>
-							<span className='text-white/60 flex items-center gap-1'>
+							<span className='text-teal-500 font-medium flex items-center gap-1'>
 								{mediaType === "tv" ? "Tv Series" : "Movie"}
 							</span>
 							<span className='w-1 h-1 bg-white/30 rounded-full' />
 						</>
 					)}
-					<span className='text-teal-500 font-medium'>Ultra HD</span>
+					<span className='text-white font-medium flex items-center gap-1'>
+						<IoStar className='text-[10px] text-orange-500' />{" "}
+						<span className='flex items-center'>{rating}</span>
+					</span>
 				</div>
 			</div>
 		</div>

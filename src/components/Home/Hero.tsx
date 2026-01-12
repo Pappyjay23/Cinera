@@ -12,6 +12,7 @@ import { MdKeyboardDoubleArrowDown } from "react-icons/md";
 import { Link } from "react-router-dom";
 import HeroSkeleton from "./HeroSkeleton";
 import { movieService } from "@/api/movieService";
+import { toast } from "sonner";
 
 const Hero = () => {
 	const {
@@ -31,7 +32,7 @@ const Hero = () => {
 
 	const handlePlayTrailer = async (movieId: string) => {
 		try {
-			const trailer = await movieService.getTrailer(movieId);
+			const trailer = await movieService.getTrailerById("movie", movieId);
 			if (trailer?.key) {
 				setTrailer({
 					title: activeMovie?.title || trailer.name,
@@ -39,9 +40,10 @@ const Hero = () => {
 				});
 				setShowTrailerModal(true);
 			} else {
-				alert("Trailer not available");
+				toast.error("Trailer not available");
 			}
 		} catch (error) {
+			toast.error("Failed to load trailer");
 			console.error("Failed to load trailer", error);
 		}
 	};

@@ -10,6 +10,7 @@ import { IoFilmOutline } from "react-icons/io5";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ErrorScreen from "../Error/Error";
 import LoadingScreen from "../Loading/Loading";
+import { toast } from "sonner";
 
 const MovieDetailScreen = () => {
 	const { id } = useParams<{ id: string }>();
@@ -25,6 +26,16 @@ const MovieDetailScreen = () => {
 		} else {
 			navigate(-1);
 		}
+	};
+
+	const handleAddToWatchlist = (movieTitle: string) => {
+		toast.success("Added to Watchlist", {
+			description: `${movieTitle} has been added to your library.`,
+			action: {
+				label: "View",
+				onClick: () => navigate("/watchlist"),
+			},
+		});
 	};
 
 	const Placeholder = (
@@ -136,9 +147,11 @@ const MovieDetailScreen = () => {
 						<div className='absolute inset-0 bg-linear-to-b from-transparent via-black/60 to-black z-10' />
 
 						<div className='flex flex-col gap-3'>
-							<button className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm font-normal hover:bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm'>
+							<button
+								onClick={() => handleAddToWatchlist(title)}
+								className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm font-normal hover:bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm'>
 								<FaPlus />
-								<span>Add to Bookmarks</span>
+								<span>Add to Watchlist</span>
 							</button>
 							<button
 								onClick={() => {
@@ -196,10 +209,8 @@ const MovieDetailScreen = () => {
 							{runtime && (
 								<>
 									<span className='text-white font-semibold'>{runtime}</span>
-									<span className='w-1 h-1 bg-white/50 rounded-full' />
 								</>
 							)}
-							<span className='text-teal-400 font-semibold'>Ultra HD</span>
 						</div>
 
 						<div className='mt-3'>

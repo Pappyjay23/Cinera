@@ -12,6 +12,7 @@ type CarouselMovie = {
 	genre: string;
 	image: string;
 	hoverImage: string;
+	rating: string;
 };
 
 interface MovieCarouselProps {
@@ -124,6 +125,7 @@ const MovieCarousel = ({
 								title={movie.title}
 								year={movie.year}
 								type={type}
+								rating={movie.rating}
 							/>
 						</Link>
 					))}

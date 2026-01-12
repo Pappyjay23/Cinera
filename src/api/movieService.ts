@@ -27,8 +27,8 @@ export const movieService = {
 		});
 		return data;
 	},
-	getTrailer: async (id: string) => {
-		const { data } = await axiosInstance.get(`/movie/${id}/videos`);
+	getTrailerById: async (type: string, id: string) => {
+		const { data } = await axiosInstance.get(`/${type}/${id}/videos`);
 		return getTrailer(data.results);
 	},
 	getUpcoming: async () => {

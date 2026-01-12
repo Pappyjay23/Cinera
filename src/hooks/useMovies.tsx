@@ -10,6 +10,7 @@ const transformMovieData = (results: any[], genreMap: any) => {
 		genre: movie.genre_ids?.map((id: number) => genreMap?.[id])[0] || "N/A",
 		image: getTmdbImage(movie.poster_path, "medium"),
 		hoverImage: getTmdbImage(movie.backdrop_path, "medium"),
+		rating: movie.vote_average.toFixed(1),
 	}));
 };
 

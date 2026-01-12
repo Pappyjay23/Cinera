@@ -64,6 +64,7 @@ const SearchScreen = () => {
 									title={movie.title}
 									year={movie.year}
 									mediaType={movie.mediaType}
+									rating={movie.rating}
 								/>
 							</Link>
 						))}

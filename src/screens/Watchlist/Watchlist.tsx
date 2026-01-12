@@ -14,6 +14,7 @@ const bookmarks = [
 			"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
 		hoverImage:
 			"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
+		rating: "7.5",
 	},
 	{
 		id: 2,
@@ -24,6 +25,7 @@ const bookmarks = [
 			"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
 		hoverImage:
 			"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
+		rating: "7.5",
 	},
 	{
 		id: 3,
@@ -34,6 +36,7 @@ const bookmarks = [
 			"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
 		hoverImage:
 			"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
+		rating: "7.5",
 	},
 	{
 		id: 4,
@@ -44,8 +47,8 @@ const bookmarks = [
 			"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
 		hoverImage:
 			"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
+		rating: "7.5",
 	},
-	
 ];
 
 const WatchlistScreen = () => {

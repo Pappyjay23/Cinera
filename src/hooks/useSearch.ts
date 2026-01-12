@@ -38,6 +38,7 @@ export const useSearch = (query: string) => {
 					image: getTmdbImage(item.poster_path, "medium"),
 					hoverImage: getTmdbImage(item.backdrop_path, "medium"),
 					mediaType: item.media_type,
+					rating: item.vote_average.toFixed(1),
 				}));
 
 			return {
