@@ -1,57 +1,13 @@
 import MovieCard from "@/components/shared/MovieCard";
 import MovieCardSkeleton from "@/components/shared/MovieCardSkeleton";
+import { UseAppContext } from "@/context/AppCinemaContext";
 import { useEffect, useRef, useState } from "react";
 import { IoArrowUp, IoBookmark } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
-const bookmarks = [
-	{
-		id: 1,
-		title: "The Spongebob Movie: Sponge on the Run",
-		year: "2025",
-		genre: "Fantasy",
-		image:
-			"https://image.tmdb.org/t/p/original//pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//kVSUUWiXoNwq2wVCZ4Mcqkniqvr.jpg",
-		rating: "7.5",
-	},
-	{
-		id: 2,
-		title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle",
-		year: "2025",
-		genre: "Fantasy",
-		image:
-			"https://image.tmdb.org/t/p/original//fWVSwgjpT2D78VUh6X8UBd2rorW.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//1RgPyOhN4DRs225BGTlHJqCudII.jpg",
-		rating: "7.5",
-	},
-	{
-		id: 3,
-		title: "Now You See Me: Now You Don't",
-		year: "2025",
-		genre: "Magic",
-		image:
-			"https://image.tmdb.org/t/p/original//oD3Eey4e4Z259XLm3eD3WGcoJAh.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//dHSz0tSFuO2CsXJ1CApSauP9Ncl.jpg",
-		rating: "7.5",
-	},
-	{
-		id: 4,
-		title: "Avatar: The Last Airbender",
-		year: "2005",
-		genre: "Action",
-		image:
-			"https://image.tmdb.org/t/p/original//9RQhVb3r3mCMqYVhLoCu4EvuipP.jpg",
-		hoverImage:
-			"https://image.tmdb.org/t/p/original//kU98MbVVgi72wzceyrEbClZmMFe.jpg",
-		rating: "7.5",
-	},
-];
-
 const WatchlistScreen = () => {
+	const { bookmarks } = UseAppContext();
+
 	const [isLoading, setIsLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv">("all");
 
@@ -78,6 +34,13 @@ const WatchlistScreen = () => {
 
 		return () => clearTimeout(timer);
 	}, []);
+
+	const filteredBookmarks = bookmarks.filter((movie) => {
+		if (activeTab === "all") return true;
+		return movie.mediaType === activeTab;
+	});
+
+	const hasItems = filteredBookmarks.length > 0;
 
 	return (
 		<div className='relative flex-1 overflow-hidden pt-20 pb-12 px-4 md:px-6 bg-black/40 backdrop-blur-xs w-full'>
@@ -106,45 +69,46 @@ const WatchlistScreen = () => {
 									? "bg-teal-700 text-white shadow-lg shadow-teal-500/20 border border-transparent"
 									: "text-white/50 hover:text-white border border-white/10"
 							}`}>
-							{tab === "tv" ? "TV Shows" : tab}
+							{tab === "tv" ? "TV Series" : tab}
 						</button>
 					))}
 				</div>
 			</div>
 
 			<div className='relative flex-1 w-full'>
-				{bookmarks.length > 0 ? (
+				{hasItems && (
 					<div className='relative'>
-						<div
-							className={`absolute flex flex-wrap justify-center gap-6 ${
-								isLoading ? "opacity-100" : "opacity-0"
-							} transition-all duration-1000 ease-in-out overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20`}>
-							{Array(8)
-								.fill(0)
-								.map((_, i) => (
-									<MovieCardSkeleton size='lg' key={i} />
-								))}
-						</div>
-						<div
-							ref={containerRef}
-							onScroll={handleScroll}
-							className={`relative flex flex-wrap justify-center gap-6 ${
-								isLoading ? "opacity-0" : "opacity-100"
-							} transition-all duration-1000 ease-in-out overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20`}>
-							{bookmarks.map((movie) => (
-								<Link key={movie.id} to={`/movie/${movie.id}`}>
-									<MovieCard
-										size='lg'
-										type='watchlist'
-										key={movie.id}
-										{...movie}
-									/>
-								</Link>
-							))}
-						</div>
+						{/* Skeleton */}
+						{isLoading && (
+							<div className='absolute inset-0 flex flex-wrap justify-center gap-6 h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20'>
+								{Array(filteredBookmarks.length)
+									.fill(0)
+									.map((_, i) => (
+										<MovieCardSkeleton size='lg' key={i} />
+									))}
+							</div>
+						)}
+
+						{/* Scroll container */}
+						{!isLoading && (
+							<div
+								ref={containerRef}
+								onScroll={handleScroll}
+								className='flex flex-wrap justify-center gap-6 overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20'>
+								{filteredBookmarks.map((movie) => {
+									const path = movie.mediaType || "movie";
+									return (
+										<Link key={movie.id} to={`/${path}/${movie.id}`}>
+											<MovieCard size='lg' type='watchlist' {...movie} />
+										</Link>
+									);
+								})}
+							</div>
+						)}
 					</div>
-				) : (
-					/* Premium Empty State */
+				)}
+
+				{!hasItems && (
 					<div className='flex flex-col items-center justify-center text-center'>
 						<div className='w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10'>
 							<IoBookmark className='text-4xl text-white' />
@@ -153,12 +117,12 @@ const WatchlistScreen = () => {
 							Your list is empty
 						</h2>
 						<p className='text-white/40 text-xs md:text-sm max-w-xs mb-8'>
-							Content you bookmark will appear here so you can easily find it
-							later.
+							Content you add to your watchlist will appear here so you can
+							easily find it later.
 						</p>
 						<Link
 							to='/movies'
-							className='px-8 py-3 bg-white text-black rounded-full font-medium text-sm hover:bg-teal-500 hover:text-white active:scale-95 transition-all duration-500 ease-in-out cursor-pointer'>
+							className='px-8 py-3 bg-white text-black rounded-full font-medium text-sm hover:bg-teal-500 hover:text-white active:scale-95 transition-all duration-500 ease-in-out'>
 							Explore Content
 						</Link>
 					</div>

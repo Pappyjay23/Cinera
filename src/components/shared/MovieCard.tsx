@@ -1,11 +1,12 @@
 import { movieService } from "@/api/movieService";
-import { UseAppContext } from "@/context/AppCinemaContext";
+import { UseAppContext, type MovieData } from "@/context/AppCinemaContext";
 import { useState } from "react";
+import { BsTrashFill } from "react-icons/bs";
 import { FaPlay, FaPlus } from "react-icons/fa";
-import { IoFilmOutline, IoStar, IoTrashOutline } from "react-icons/io5";
-import MovieCardSkeleton from "./MovieCardSkeleton";
-import { toast } from "sonner";
+import { IoCheckmarkDoneSharp, IoFilmOutline, IoStar } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import MovieCardSkeleton from "./MovieCardSkeleton";
 
 interface MovieCardProps {
 	title: string;
@@ -32,7 +33,13 @@ const MovieCard = ({
 	mediaType = "movie",
 	rating,
 }: MovieCardProps) => {
-	const { setShowTrailerModal, setTrailer } = UseAppContext();
+	const {
+		setShowTrailerModal,
+		setTrailer,
+		handleAddToWatchlist,
+		handleRemoveFromWatchlist,
+		bookmarks,
+	} = UseAppContext();
 	const [imgError, setImgError] = useState(false);
 	const [isImageLoading, setIsImageLoading] = useState(true);
 	const navigate = useNavigate();
@@ -56,13 +63,23 @@ const MovieCard = ({
 		}
 	};
 
-	const handleAddToWatchlist = (movieTitle: string) => {
+	const handleAdd = () => {
+		handleAddToWatchlist(watchlistDetails);
+
 		toast.success("Added to Watchlist", {
-			description: `${movieTitle} has been added to your library.`,
+			description: `${title} has been added to your library.`,
 			action: {
 				label: "View",
 				onClick: () => navigate("/watchlist"),
 			},
+		});
+	};
+
+	const handleRemove = () => {
+		handleRemoveFromWatchlist(id!);
+
+		toast.info("Removed from Watchlist", {
+			description: `${title} has been removed from your library.`,
 		});
 	};
 
@@ -86,6 +103,21 @@ const MovieCard = ({
 			</div>
 		</div>
 	);
+
+	const watchlistDetails: MovieData = {
+		title,
+		year,
+		image,
+		hoverImage,
+		genre,
+		size: "lg",
+		mediaType,
+		type: "watchlist",
+		id,
+		rating,
+	};
+
+	const isBookmarked = bookmarks.some((movie) => movie.id === id);
 
 	return (
 		<div
@@ -139,61 +171,50 @@ const MovieCard = ({
 									e.stopPropagation();
 									handlePlayTrailer(String(id));
 								}}
-								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
-								<FaPlay
-									className={`${
-										size === "sm"
-											? "text-[6px] md:text-[8px]"
-											: "text-[8px] md:text-xs"
-									}`}
-								/>
+								className='transform-gpu p-2 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90 h-7 w-7 flex justify-center items-center'>
+								<FaPlay className='text-[6px] md:text-[8px]' />
 							</button>
 							<button
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
+									handleRemove();
 								}}
-								className='transform-gpu p-2 lg:p-3 bg-red-500 lg:bg-white/10 threed-effect hover:bg-red-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
-								<IoTrashOutline
-									className={`${
-										size === "sm"
-											? "text-[8px] md:text-[10px]"
-											: "text-[10px] md:text-sm"
-									}`}
-								/>
+								className='transform-gpu p-2 bg-red-500 lg:bg-white/10 threed-effect hover:bg-red-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90 h-7 w-7 flex justify-center items-center'>
+								<BsTrashFill className='text-[8px] md:text-[10px]' />
 							</button>
 						</>
 					) : (
 						<>
-							<button
-								onClick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									handleAddToWatchlist(title);
-								}}
-								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
-								<FaPlus
-									className={`${
-										size === "sm"
-											? "text-[6px] md:text-[8px]"
-											: "text-[8px] md:text-xs"
-									}`}
-								/>
-							</button>
+							{isBookmarked ? (
+								<button
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										handleRemove();
+									}}
+									className='transform-gpu p-2 bg-teal-500/50 threed-effect backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90 h-7 w-7 flex justify-center items-center'>
+									<IoCheckmarkDoneSharp className='text-[10px] md:text-[12px]' />
+								</button>
+							) : (
+								<button
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										handleAdd();
+									}}
+									className='transform-gpu p-2 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90 h-7 w-7 flex justify-center items-center'>
+									<FaPlus className='text-[6px] md:text-[8px]' />
+								</button>
+							)}
 							<button
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
 									handlePlayTrailer(String(id));
 								}}
-								className='transform-gpu p-2 lg:p-3 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90'>
-								<FaPlay
-									className={`${
-										size === "sm"
-											? "text-[6px] md:text-[8px]"
-											: "text-[8px] md:text-xs"
-									}`}
-								/>
+								className='transform-gpu p-1 bg-teal-500/50 lg:bg-white/10 threed-effect hover:bg-teal-500 backdrop-blur-md border border-white/20 rounded-full text-white transition-all duration-700 ease-in-out cursor-pointer active:scale-90 h-7 w-7 flex justify-center items-center'>
+								<FaPlay className='text-[6px] md:text-[8px]' />
 							</button>
 						</>
 					)}

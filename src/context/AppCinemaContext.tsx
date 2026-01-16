@@ -15,6 +15,19 @@ export type HeroMovie = {
 	genres?: string[];
 };
 
+export type MovieData = {
+	title: string;
+	year: string;
+	image: string;
+	hoverImage: string;
+	genre: string;
+	size?: "sm" | "lg";
+	mediaType?: "movie" | "tv";
+	type?: string;
+	id?: number;
+	rating: string;
+};
+
 type Trailer = {
 	title: string;
 	url: string;
@@ -36,6 +49,9 @@ interface AppCinemaContextType {
 	setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 	selectedGenres: string[];
 	setSelectedGenres: React.Dispatch<React.SetStateAction<string[]>>;
+	bookmarks: MovieData[];
+	handleAddToWatchlist: (movie: MovieData) => void;
+	handleRemoveFromWatchlist: (id: number) => void;
 }
 
 const AppCinemaContext = createContext<AppCinemaContextType | undefined>(
@@ -62,6 +78,15 @@ export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+
+	const [bookmarks, setBookmarks] = useState<MovieData[]>([]);
+
+	const handleAddToWatchlist = (movie: MovieData) => {
+		setBookmarks((prevBookmarks) => [...prevBookmarks, movie]);
+	};
+	const handleRemoveFromWatchlist = (id: number) => {
+		setBookmarks((prevBookmarks) => prevBookmarks.filter((m) => m.id !== id));
+	};
 
 	const handleNext = () => {
 		if (isTransitioning || heroMovies.length === 0) return;
@@ -99,6 +124,9 @@ export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 				setSearchQuery,
 				selectedGenres,
 				setSelectedGenres,
+				bookmarks,
+				handleAddToWatchlist,
+				handleRemoveFromWatchlist,
 			}}>
 			{children}
 		</AppCinemaContext.Provider>

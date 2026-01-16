@@ -1,16 +1,20 @@
 import CastImage from "@/components/Movies/CastImage";
-import { UseAppContext } from "@/context/AppCinemaContext";
+import { UseAppContext, type MovieData } from "@/context/AppCinemaContext";
 import { useMediaDetails } from "@/hooks/useMovies";
 import { formatRuntime, getTrailer } from "@/utils";
 import { getTmdbImage } from "@/utils/tmdb";
 import { useState } from "react";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import { HiChevronLeft } from "react-icons/hi";
-import { IoFilmOutline } from "react-icons/io5";
+import {
+	IoCheckmarkDoneSharp,
+	IoFilmOutline,
+	IoTrashOutline,
+} from "react-icons/io5";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import ErrorScreen from "../Error/Error";
 import LoadingScreen from "../Loading/Loading";
-import { toast } from "sonner";
 
 interface Provider {
 	provider_id: number;
@@ -22,7 +26,13 @@ interface Provider {
 const MovieDetailScreen = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	const { setShowTrailerModal, setTrailer } = UseAppContext();
+	const {
+		setShowTrailerModal,
+		setTrailer,
+		handleAddToWatchlist,
+		bookmarks,
+		handleRemoveFromWatchlist,
+	} = UseAppContext();
 	const [imgError, setImgError] = useState(false);
 
 	const location = useLocation();
@@ -35,13 +45,23 @@ const MovieDetailScreen = () => {
 		}
 	};
 
-	const handleAddToWatchlist = (movieTitle: string) => {
+	const handleAdd = () => {
+		handleAddToWatchlist(watchlistDetails);
+
 		toast.success("Added to Watchlist", {
-			description: `${movieTitle} has been added to your library.`,
+			description: `${title} has been added to your library.`,
 			action: {
 				label: "View",
 				onClick: () => navigate("/watchlist"),
 			},
+		});
+	};
+
+	const handleRemove = () => {
+		handleRemoveFromWatchlist(media.id!);
+
+		toast.info("Removed from Watchlist", {
+			description: `${title} has been removed from your library.`,
 		});
 	};
 
@@ -110,6 +130,21 @@ const MovieDetailScreen = () => {
 	const trailer = getTrailer(media.videos?.results);
 	const isReleased = new Date(releaseDate) <= new Date();
 
+	const watchlistDetails: MovieData = {
+		title,
+		year: releaseDate ? releaseDate.split("-")[0] : "",
+		image: getTmdbImage(media.poster_path, "medium"),
+		hoverImage: getTmdbImage(media.backdrop_path, "medium"),
+		genre: media.genres?.[0]?.name || "",
+		size: "lg",
+		mediaType: media.media_type,
+		type: "watchlist",
+		id: media.id,
+		rating: media.vote_average.toFixed(1),
+	};
+
+	const isBookmarked = bookmarks.some((movie) => movie.id === media.id);
+
 	return (
 		<div
 			className='min-h-svh w-full relative'
@@ -156,12 +191,28 @@ const MovieDetailScreen = () => {
 						<div className='absolute inset-0 bg-linear-to-b from-transparent via-black/60 to-black z-10' />
 
 						<div className='flex flex-col gap-3'>
-							<button
-								onClick={() => handleAddToWatchlist(title)}
-								className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm font-normal hover:bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm'>
-								<FaPlus />
-								<span>Add to Watchlist</span>
-							</button>
+							{isBookmarked ? (
+								<button
+									onClick={() => handleRemove()}
+									className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 min-w-40 md:min-w-50 rounded-full backdrop-blur-sm font-normal bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm group'>
+									<div className='flex items-center justify-center gap-2 transition-opacity duration-500 ease-in-out group-hover:opacity-0'>
+										<IoCheckmarkDoneSharp />
+										<span>Added to Watchlist</span>
+									</div>
+
+									<div className='absolute inset-0 flex items-center justify-center gap-2 opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100 text-white/90'>
+										<IoTrashOutline />
+										<span>Remove from Watchlist</span>
+									</div>
+								</button>
+							) : (
+								<button
+									onClick={() => handleAdd()}
+									className='relative z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm font-normal hover:bg-teal-700 threed-effect transition-all duration-700 ease-in-out cursor-pointer active:scale-90 text-[10px] md:text-sm'>
+									<FaPlus />
+									<span>Add to Watchlist</span>
+								</button>
+							)}
 							<button
 								onClick={() => {
 									setTrailer({
