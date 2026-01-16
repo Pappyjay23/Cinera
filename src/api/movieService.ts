@@ -11,6 +11,19 @@ interface Genre extends MediaItem {
 	name: string;
 }
 
+interface MovieData {
+	id: number;
+	title?: string;
+	name?: string;
+	release_date?: string;
+	first_air_date?: string;
+	genre_ids?: number[];
+	poster_path?: string;
+	backdrop_path?: string;
+	vote_average: number;
+	media_type?: string;
+}
+
 // helpers
 const MAX_FUTURE_YEARS = 1;
 
@@ -46,6 +59,15 @@ const filterAndSortByDate = (items: MediaItem[]) => {
 
 const tag = (items: MediaItem[], mediaType: string) =>
 	items.map((r) => ({ ...r, media_type: mediaType }));
+
+const fetchMergedPages = async (
+	fetchPage: (page: number) => Promise<MovieData[]>,
+	pages: number
+): Promise<MovieData[]> => {
+	const requests = Array.from({ length: pages }, (_, i) => fetchPage(i + 1));
+	const results = await Promise.all(requests);
+	return results.flat();
+};
 
 export const movieService = {
 	getGenresList: async (type: "all" | "movie" | "tv" = "all") => {
@@ -86,8 +108,14 @@ export const movieService = {
 		}, {});
 	},
 	getTrending: async (type: "all" | "movie" | "tv" = "movie") => {
-		const { data } = await axiosInstance.get(`/trending/${type}/day`);
-		return data.results;
+		const results = await fetchMergedPages(async (page) => {
+			const { data } = await axiosInstance.get(`/trending/${type}/day`, {
+				params: { page },
+			});
+			return data.results;
+		}, 1);
+
+		return results;
 	},
 	getDetails: async (type: string, id: string) => {
 		// type will be either "movie" or "tv"
@@ -101,8 +129,14 @@ export const movieService = {
 		return getTrailer(data.results);
 	},
 	getUpcoming: async () => {
-		const { data } = await axiosInstance.get("/movie/upcoming");
-		return data.results;
+		const results = await fetchMergedPages(async (page) => {
+			const { data } = await axiosInstance.get(`/movie/upcoming`, {
+				params: { page },
+			});
+			return data.results;
+		}, 2);
+
+		return results;
 	},
 
 	getModernClassics: async () => {
@@ -110,18 +144,37 @@ export const movieService = {
 			params: {
 				"vote_count.gte": 1000,
 				"vote_average.gte": 7.5,
-				"primary_release_date.gte": getDynamicDate(6),
-				sort_by: "vote_average.desc",
+				"primary_release_date.gte": getDynamicDate(10),
+				sort_by: "popularity.desc",
 			},
 		});
-		return data.results;
+		return data.results.sort(() => 0.5 - Math.random());
 	},
 
-	getPopularByGenre: async (genreId: number) => {
-		const { data } = await axiosInstance.get("/discover/movie", {
-			params: { with_genres: genreId, sort_by: "popularity.desc" },
-		});
-		return data.results;
+	getPopularByGenre: async ({
+		genreId,
+		mediaType = "movie",
+	}: {
+		genreId: number;
+		mediaType: "movie" | "tv";
+	}): Promise<MovieData[]> => {
+		const startPage = Math.floor(Math.random() * 5) + 1;
+
+		const results = await fetchMergedPages(async (iteration) => {
+			// iteration 1 uses startPage, iteration 2 uses startPage + 1
+			const currentPage = startPage + (iteration - 1);
+
+			const { data } = await axiosInstance.get(`/discover/${mediaType}`, {
+				params: {
+					with_genres: genreId,
+					sort_by: "popularity.desc",
+					page: currentPage,
+				},
+			});
+			return data.results;
+		}, 2);
+
+		return results;
 	},
 	getSearchResults: async (query: string, page: number = 1) => {
 		if (!query) return { results: [], total_pages: 0 };

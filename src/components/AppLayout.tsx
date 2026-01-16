@@ -54,7 +54,7 @@ const AppLayout = () => {
 										key={item.name}
 										to={item.href}
 										className={() =>
-											`relative group active:scale-90 transition-transform duration-300 ease-in-out transform-gpu will-change-transform`
+											`relative group active:scale-90 transition-transform duration-300 ease-in-out transform-gpu will-change-transform outline-none border-0`
 										}>
 										{({ isActive }) => (
 											<>

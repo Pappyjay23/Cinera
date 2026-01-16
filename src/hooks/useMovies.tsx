@@ -21,7 +21,8 @@ interface GenreMap {
 
 const transformMovieData = (
 	results: MovieData[],
-	genreMap: GenreMap | undefined
+	genreMap: GenreMap | undefined,
+	mediaType?: string
 ) => {
 	return results.map((movie) => ({
 		id: movie.id,
@@ -35,7 +36,7 @@ const transformMovieData = (
 		image: getTmdbImage(movie.poster_path ?? "", "medium"),
 		hoverImage: getTmdbImage(movie.backdrop_path ?? "", "medium"),
 		rating: movie.vote_average.toFixed(1),
-		media_type: movie.media_type ?? "movie",
+		media_type: movie.media_type ?? mediaType ?? "movie",
 	}));
 };
 
@@ -58,7 +59,7 @@ export const useTrendingMovies = () => {
 			return shuffled.slice(0, 7).map((movie) => ({
 				...movie,
 				genres: movie.genre_ids
-					.map((id: number) => genreMap?.[id])
+					?.map((id: number) => genreMap?.[id])
 					.filter(Boolean),
 			}));
 		},
@@ -165,7 +166,7 @@ export const useHomeMovies = () => {
 	const fetchEnabled = !!genreMap;
 
 	const trending = useQuery({
-		queryKey: ["movies", "trending"],
+		queryKey: ["movies", "trendingHome"],
 		queryFn: () => movieService.getTrending(),
 		enabled: fetchEnabled,
 	});
@@ -205,7 +206,18 @@ export const useHomeMovies = () => {
 
 	const action = useQuery({
 		queryKey: ["movies", "action"],
-		queryFn: () => movieService.getPopularByGenre(28),
+		queryFn: () =>
+			movieService.getPopularByGenre({ genreId: 28, mediaType: "movie" }),
+		enabled: fetchEnabled,
+	});
+
+	const sciFiTv = useQuery({
+		queryKey: ["tv", "sci-fi"],
+		queryFn: () =>
+			movieService.getPopularByGenre({
+				genreId: 10765,
+				mediaType: "tv",
+			}),
 		enabled: fetchEnabled,
 	});
 
@@ -214,13 +226,15 @@ export const useHomeMovies = () => {
 		const seenIds = new Set<number>();
 
 		// Helper to filter and transform
-		const process = (rawList: MovieData[]) => {
-			const unique = rawList.filter((m) => {
-				if (seenIds.has(m.id)) return false;
-				seenIds.add(m.id);
-				return true;
-			});
-			return transformMovieData(unique, genreMap);
+		const process = (rawList: MovieData[], mediaType?: string, limit = 20) => {
+			const unique = rawList
+				.filter((m) => {
+					if (seenIds.has(m.id)) return false;
+					seenIds.add(m.id);
+					return true;
+				})
+				.slice(0, limit);
+			return transformMovieData(unique, genreMap, mediaType);
 		};
 
 		return {
@@ -228,6 +242,7 @@ export const useHomeMovies = () => {
 			upcoming: process(upcoming.data || []),
 			topRated: process(topRated.data || []),
 			action: process(action.data || []),
+			sciFi: process(sciFiTv.data || [], "tv"),
 		};
 	};
 
@@ -241,7 +256,7 @@ export const useHomeMovies = () => {
 	return {
 		isLoading,
 		data: isLoading
-			? { trending: [], upcoming: [], topRated: [], action: [] }
+			? { trending: [], upcoming: [], topRated: [], action: [], sciFi: [] }
 			: getDeduplicatedData(),
 	};
 };

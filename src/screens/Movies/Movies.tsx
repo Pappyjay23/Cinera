@@ -34,7 +34,7 @@ const MoviesScreen = () => {
 	const { data: trendingData, isLoading: isTrendingLoading } =
 		useTrendingMovieAndShow(activeTab);
 
-	const trendingMovies = trendingData?.slice(0, 10) || [];
+	const trendingMovies = trendingData || [];
 
 	const {
 		data: discoverData,

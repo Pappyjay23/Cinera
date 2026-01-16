@@ -35,6 +35,12 @@ const HomeScreen = () => {
 						movies={data.action}
 						isLoading={isLoading}
 					/>
+					
+					<MovieCarousel
+						title='Scifi TV'
+						movies={data.sciFi}
+						isLoading={isLoading}
+					/>
 				</div>
 			</div>
 		</div>
