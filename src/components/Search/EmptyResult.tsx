@@ -1,3 +1,4 @@
+import { UseAppContext } from "@/context/AppCinemaContext";
 import { IoSearch } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
@@ -6,6 +7,8 @@ const EmptyResult = ({
 }: {
 	description?: string;
 }) => {
+	const { setSelectedGenres } = UseAppContext();
+
 	return (
 		<div className='flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-700'>
 			<div className='relative mb-6'>
@@ -18,16 +21,15 @@ const EmptyResult = ({
 
 			{/* Re-engagement chips */}
 			<div className='flex flex-wrap justify-center gap-2'>
-				{["Action", "Comedy", "Trending", "New Releases", "Fantasy"].map(
-					(tag) => (
-						<Link
-							to='/movies'
-							key={tag}
-							className='px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs hover:bg-teal-500/20 hover:border-teal-500/50 active:scale-95 cursor-pointer transition-all duration-500 ease-in-out'>
-							{tag}
-						</Link>
-					)
-				)}
+				{["Action", "Animation", "Comedy", "Fantasy", "Thriller"].map((tag) => (
+					<Link
+						onClick={() => setSelectedGenres([tag])}
+						to='/movies'
+						key={tag}
+						className='px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs hover:bg-teal-500/20 hover:border-teal-500/50 active:scale-95 cursor-pointer transition-all duration-500 ease-in-out'>
+						{tag}
+					</Link>
+				))}
 			</div>
 		</div>
 	);

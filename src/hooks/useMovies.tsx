@@ -1,16 +1,41 @@
 import { movieService } from "@/api/movieService";
 import { getTmdbImage } from "@/utils/tmdb";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-const transformMovieData = (results: any[], genreMap: any) => {
-	return results.map((movie: any) => ({
+interface MovieData {
+	id: number;
+	title?: string;
+	name?: string;
+	release_date?: string;
+	first_air_date?: string;
+	genre_ids?: number[];
+	poster_path?: string;
+	backdrop_path?: string;
+	vote_average: number;
+	media_type?: string;
+}
+
+interface GenreMap {
+	[key: number]: string;
+}
+
+const transformMovieData = (
+	results: MovieData[],
+	genreMap: GenreMap | undefined
+) => {
+	return results.map((movie) => ({
 		id: movie.id,
-		title: movie.title,
-		year: movie.release_date ? movie.release_date.split("-")[0] : "N/A",
+		title: movie.title ?? movie.name ?? "Untitled",
+		year: movie.release_date
+			? movie.release_date.split("-")[0]
+			: movie?.first_air_date
+			? movie?.first_air_date.split("-")[0]
+			: "N/A",
 		genre: movie.genre_ids?.map((id: number) => genreMap?.[id])[0] || "N/A",
-		image: getTmdbImage(movie.poster_path, "medium"),
-		hoverImage: getTmdbImage(movie.backdrop_path, "medium"),
+		image: getTmdbImage(movie.poster_path ?? "", "medium"),
+		hoverImage: getTmdbImage(movie.backdrop_path ?? "", "medium"),
 		rating: movie.vote_average.toFixed(1),
+		media_type: movie.media_type ?? "movie",
 	}));
 };
 
@@ -30,7 +55,7 @@ export const useTrendingMovies = () => {
 
 			const shuffled = results.sort(() => 0.5 - Math.random());
 
-			return shuffled.slice(0, 7).map((movie: any) => ({
+			return shuffled.slice(0, 7).map((movie) => ({
 				...movie,
 				genres: movie.genre_ids
 					.map((id: number) => genreMap?.[id])
@@ -38,7 +63,7 @@ export const useTrendingMovies = () => {
 			}));
 		},
 		enabled: !!genreMap,
-		staleTime: 1000 * 60 * 60, // Consider data fresh for 1 hour
+		staleTime: 1000 * 60 * 60,
 	});
 };
 
@@ -50,7 +75,83 @@ export const useMediaDetails = (
 		queryKey: ["details", type, id],
 		queryFn: () => movieService.getDetails(type!, id!),
 		enabled: !!id && !!type,
-		staleTime: 1000 * 60 * 30, // 30 mins
+		staleTime: 1000 * 60 * 30,
+	});
+};
+
+export const useTrendingMovieAndShow = (
+	activeTab: "all" | "movie" | "tv" | undefined
+) => {
+	const { data: genreMap, isLoading: isGenreLoading } = useQuery({
+		queryKey: ["genres", "unified"],
+		queryFn: movieService.getUnifiedGenres,
+		staleTime: Infinity,
+	});
+
+	const trendingQuery = useQuery({
+		queryKey: ["trending", activeTab],
+		queryFn: async () => {
+			const results = await movieService.getTrending(activeTab);
+			return transformMovieData(results, genreMap);
+		},
+		staleTime: 1000 * 60 * 30,
+		enabled: !!genreMap,
+	});
+
+	return {
+		...trendingQuery,
+		isLoading: isGenreLoading || trendingQuery.isLoading,
+	};
+};
+
+export const useDiscoverMovies = (
+	type: "all" | "movie" | "tv",
+	selectedGenreNames: string[]
+) => {
+	const { data: genreMap } = useQuery({
+		queryKey: ["genres", "unified"],
+		queryFn: movieService.getUnifiedGenres,
+		staleTime: Infinity,
+	});
+
+	return useInfiniteQuery({
+		queryKey: ["discover", type, selectedGenreNames],
+		queryFn: async ({ pageParam = 1 }) => {
+			// Create reverse lookup: name -> id
+			const nameToIdMap = Object.entries(genreMap || {}).reduce(
+				(acc, [id, name]) => {
+					acc[name as string] = Number(id);
+					return acc;
+				},
+				{} as Record<string, number>
+			);
+
+			const genreIds = selectedGenreNames
+				.map((name) => nameToIdMap[name])
+				.filter((id) => id !== undefined);
+
+			let data;
+			if (type === "all") {
+				data = await movieService.getDiscoverAll(genreIds, pageParam);
+			} else {
+				data = await movieService.getDiscover(type, genreIds, pageParam);
+			}
+
+			return {
+				results: transformMovieData(
+					data.results as unknown as MovieData[],
+					genreMap
+				),
+				nextPage: pageParam + 1,
+				totalPages: data.total_pages,
+				pageItemsCount: data.results.length,
+			};
+		},
+		getNextPageParam: (lastPage) =>
+			lastPage.nextPage <= lastPage.totalPages ? lastPage.nextPage : undefined,
+		enabled: !!genreMap,
+		staleTime: 1000 * 60 * 30,
+		initialPageParam: 1,
 	});
 };
 
@@ -65,7 +166,7 @@ export const useHomeMovies = () => {
 
 	const trending = useQuery({
 		queryKey: ["movies", "trending"],
-		queryFn: movieService.getTrending,
+		queryFn: () => movieService.getTrending(),
 		enabled: fetchEnabled,
 	});
 
@@ -79,7 +180,7 @@ export const useHomeMovies = () => {
 			sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 			const limitDate = sixMonthsAgo.toISOString().split("T")[0];
 
-			return results.filter((movie: any) => {
+			return results.filter((movie: MovieData) => {
 				if (!movie.release_date) return false;
 
 				const releaseYear = parseInt(movie.release_date.split("-")[0]);
@@ -113,7 +214,7 @@ export const useHomeMovies = () => {
 		const seenIds = new Set<number>();
 
 		// Helper to filter and transform
-		const process = (rawList: any[]) => {
+		const process = (rawList: MovieData[]) => {
 			const unique = rawList.filter((m) => {
 				if (seenIds.has(m.id)) return false;
 				seenIds.add(m.id);

@@ -12,6 +12,13 @@ import ErrorScreen from "../Error/Error";
 import LoadingScreen from "../Loading/Loading";
 import { toast } from "sonner";
 
+interface Provider {
+	provider_id: number;
+	display_priority: number;
+	logo_path: string;
+	provider_name: string;
+}
+
 const MovieDetailScreen = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
@@ -79,7 +86,9 @@ const MovieDetailScreen = () => {
 
 		// Unique by provider_id and Sort by TMDB priority
 		return Array.from(new Map(all.map((p) => [p.provider_id, p])).values())
-			.sort((a: any, b: any) => a.display_priority - b.display_priority)
+			.sort(
+				(a: Provider, b: Provider) => a.display_priority - b.display_priority
+			)
 			.slice(0, 6); // Keep it clean, show top 6
 	};
 
@@ -236,14 +245,20 @@ const MovieDetailScreen = () => {
 								Cast
 							</p>
 							<div className='flex items-start gap-2 overflow-x-auto no-scrollbar w-full text-xs text-center font-medium'>
-								{casts.map((cast: any) => (
-									<div
-										key={cast.id}
-										className='flex flex-col gap-1 items-center w-25 shrink-0'>
-										<CastImage path={cast.profile_path} name={cast.name} />
-										<p>{cast.name}</p>
-									</div>
-								))}
+								{casts.map(
+									(cast: {
+										id: number;
+										profile_path: string;
+										name: string;
+									}) => (
+										<div
+											key={cast.id}
+											className='flex flex-col gap-1 items-center w-25 shrink-0'>
+											<CastImage path={cast.profile_path} name={cast.name} />
+											<p>{cast.name}</p>
+										</div>
+									)
+								)}
 								{casts.length === 0 && (
 									<p className='text-white/50'>No Cast available.</p>
 								)}
@@ -255,19 +270,19 @@ const MovieDetailScreen = () => {
 							</p>
 							<div className='flex flex-wrap items-center gap-2'>
 								{movieProviders.length > 0 ? (
-									movieProviders.map((provider: any) => (
+									movieProviders.map((provider: Provider) => (
 										<a
 											key={provider.provider_id}
 											href={tmdbWatchLink}
 											target='_blank'
 											rel='noopener noreferrer'
 											className={`
-                                            group relative z-20 flex items-center gap-2 px-3 py-1.5 
-                                            rounded-full cursor-pointer threed-effect bg-white/5 backdrop-blur-md 
-                                            border border-white/10 text-white/80
-                                            transition-all duration-500 ease-in-out
-                                            hover:bg-white/10 hover:border-white/30 hover:scale-105
-                                        `}>
+											group relative z-20 flex items-center gap-2 px-3 py-1.5 
+											rounded-full cursor-pointer threed-effect bg-white/5 backdrop-blur-md 
+											border border-white/10 text-white/80
+											transition-all duration-500 ease-in-out
+											hover:bg-white/10 hover:border-white/30 hover:scale-105
+										`}>
 											<div className='w-5 h-5 rounded-md overflow-hidden shrink-0 shadow-md transition-transform duration-500 group-hover:scale-110'>
 												<img
 													src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}

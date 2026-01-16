@@ -34,6 +34,8 @@ interface AppCinemaContextType {
 	setTrailer: React.Dispatch<React.SetStateAction<Trailer>>;
 	searchQuery: string;
 	setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+	selectedGenres: string[];
+	setSelectedGenres: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const AppCinemaContext = createContext<AppCinemaContextType | undefined>(
@@ -58,6 +60,8 @@ export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 	const [showTrailerModal, setShowTrailerModal] = useState(false);
 
 	const [searchQuery, setSearchQuery] = useState("");
+
+	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
 	const handleNext = () => {
 		if (isTransitioning || heroMovies.length === 0) return;
@@ -93,6 +97,8 @@ export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 				setTrailer,
 				searchQuery,
 				setSearchQuery,
+				selectedGenres,
+				setSelectedGenres,
 			}}>
 			{children}
 		</AppCinemaContext.Provider>

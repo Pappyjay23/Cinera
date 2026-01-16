@@ -27,7 +27,9 @@ export const formatRuntime = (minutes: number): string => {
 	return hours > 0 ? `${hours}h ${remainingMinutes}m` : `${remainingMinutes}m`;
 };
 
-export const getTrailer = (videos: any[]) => {
+export const getTrailer = (
+	videos: { type: string; name: string; key: string }[]
+) => {
 	if (!videos || videos.length === 0) return null;
 
 	// 1. Prioritize "Official Trailer" (Exact match or includes keywords)

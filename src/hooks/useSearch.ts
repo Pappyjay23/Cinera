@@ -3,6 +3,19 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { movieService } from "@/api/movieService";
 import { getTmdbImage } from "@/utils/tmdb";
 
+interface SearchResult {
+	id: number;
+	media_type: "movie" | "tv";
+	title?: string;
+	name?: string;
+	release_date?: string;
+	first_air_date?: string;
+	genre_ids?: number[];
+	poster_path?: string;
+	backdrop_path?: string;
+	vote_average: number;
+}
+
 export const useSearch = (query: string) => {
 	const [debouncedQuery, setDebouncedQuery] = useState(query);
 
@@ -26,8 +39,11 @@ export const useSearch = (query: string) => {
 			);
 
 			const transformed = data.results
-				.filter((item: any) => item.media_type !== "person")
-				.map((item: any) => ({
+				.filter(
+					(item: SearchResult) =>
+						item.media_type === "movie" || item.media_type === "tv"
+				)
+				.map((item: SearchResult) => ({
 					id: item.id,
 					title: item.title || item.name,
 					year:
@@ -35,8 +51,8 @@ export const useSearch = (query: string) => {
 						"N/A",
 					genre:
 						item.genre_ids?.map((id: number) => genreMap?.[id])[0] || "N/A",
-					image: getTmdbImage(item.poster_path, "medium"),
-					hoverImage: getTmdbImage(item.backdrop_path, "medium"),
+					image: getTmdbImage(item.poster_path ?? "", "medium"),
+					hoverImage: getTmdbImage(item.backdrop_path ?? "", "medium"),
 					mediaType: item.media_type,
 					rating: item.vote_average.toFixed(1),
 				}));
@@ -48,7 +64,6 @@ export const useSearch = (query: string) => {
 				pageItemsCount: transformed.length,
 			};
 		},
-		// This tells the query how to find the next page
 		getNextPageParam: (lastPage) =>
 			lastPage.nextPage <= lastPage.totalPages ? lastPage.nextPage : undefined,
 		enabled: debouncedQuery.length > 1 && !!genreMap,

@@ -13,6 +13,7 @@ type CarouselMovie = {
 	image: string;
 	hoverImage: string;
 	rating: string;
+	media_type: string;
 };
 
 interface MovieCarouselProps {
@@ -20,6 +21,7 @@ interface MovieCarouselProps {
 	movies: CarouselMovie[];
 	title?: string;
 	type?: string;
+	activeTab?: string;
 	size?: "sm" | "lg";
 }
 
@@ -29,6 +31,7 @@ const MovieCarousel = ({
 	title,
 	size = "sm",
 	type,
+	activeTab,
 }: MovieCarouselProps) => {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -114,21 +117,27 @@ const MovieCarousel = ({
 					className={`relative flex gap-3 items-center overflow-x-scroll overflow-y-hidden my-4 w-full no-scrollbar ${dimensions} ${
 						isLoading ? "opacity-0 z-1" : "opacity-100 z-2"
 					} transition-all duration-700 ease-in-out`}>
-					{movies.map((movie) => (
-						<Link to={`/movie/${movie.id}`} key={movie.id}>
-							<MovieCard
-								id={movie.id}
-								size={size}
-								genre={movie.genre}
-								image={movie.image}
-								hoverImage={movie.hoverImage}
-								title={movie.title}
-								year={movie.year}
-								type={type}
-								rating={movie.rating}
-							/>
-						</Link>
-					))}
+					{movies.map((movie) => {
+						const mediaType: "movie" | "tv" = (movie.media_type ||
+							(activeTab === "all" ? "movie" : activeTab) ||
+							"movie") as "movie" | "tv";
+						return (
+							<Link to={`/${mediaType}/${movie.id}`} key={`carousel-${movie.media_type}-${movie.id}`}>
+								<MovieCard
+									id={movie.id}
+									size={size}
+									genre={movie.genre}
+									image={movie.image}
+									hoverImage={movie.hoverImage}
+									title={movie.title}
+									year={movie.year}
+									type={type}
+									mediaType={mediaType}
+									rating={movie.rating}
+								/>
+							</Link>
+						);
+					})}
 				</div>
 
 				<div

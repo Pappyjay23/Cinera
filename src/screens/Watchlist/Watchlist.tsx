@@ -1,7 +1,7 @@
 import MovieCard from "@/components/shared/MovieCard";
 import MovieCardSkeleton from "@/components/shared/MovieCardSkeleton";
-import { useEffect, useState } from "react";
-import { IoBookmark } from "react-icons/io5";
+import { useEffect, useRef, useState } from "react";
+import { IoArrowUp, IoBookmark } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 const bookmarks = [
@@ -55,6 +55,22 @@ const WatchlistScreen = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv">("all");
 
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const [showScrollTop, setShowScrollTop] = useState(false);
+
+	const handleScroll = () => {
+		const el = containerRef.current;
+		if (!el) return;
+
+		window.requestAnimationFrame(() => {
+			setShowScrollTop(el.scrollTop > 500);
+		});
+	};
+
+	const scrollToTop = () => {
+		containerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+	};
+
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			setIsLoading(false);
@@ -84,7 +100,7 @@ const WatchlistScreen = () => {
 					{["all", "movie", "tv"].map((tab) => (
 						<button
 							key={tab}
-							onClick={() => setActiveTab(tab as any)}
+							onClick={() => setActiveTab(tab as "movie" | "tv" | "all")}
 							className={`px-6 py-2 rounded-full threed-effect cursor-pointer text-xs font-medium active:scale-95 transition-all duration-500 ease-in-out capitalize ${
 								activeTab === tab
 									? "bg-teal-700 text-white shadow-lg shadow-teal-500/20 border border-transparent"
@@ -110,6 +126,8 @@ const WatchlistScreen = () => {
 								))}
 						</div>
 						<div
+							ref={containerRef}
+							onScroll={handleScroll}
 							className={`relative flex flex-wrap justify-center gap-6 ${
 								isLoading ? "opacity-0" : "opacity-100"
 							} transition-all duration-1000 ease-in-out overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20`}>
@@ -146,6 +164,15 @@ const WatchlistScreen = () => {
 					</div>
 				)}
 			</div>
+
+			{showScrollTop && (
+				<button
+					onClick={scrollToTop}
+					aria-label='Scroll to top'
+					className='absolute bottom-4 md:bottom-8 right-4 md:right-8 z-80 w-9 h-9 text-sm rounded-full bg-teal-600 text-white flex items-center justify-center shadow-2xl hover:bg-teal-500 active:scale-95 transition-all duration-500 ease-in-out cursor-pointer'>
+					<IoArrowUp />
+				</button>
+			)}
 		</div>
 	);
 };
