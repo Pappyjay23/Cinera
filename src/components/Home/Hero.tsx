@@ -1,5 +1,5 @@
 import { UseAppContext } from "@/context/AppCinemaContext";
-import { useTrendingMovies } from "@/hooks/useMovies";
+import { useTrendingMovies, type MovieData } from "@/hooks/useMovies";
 import { formatReadableDate } from "@/utils";
 import { getTmdbImage } from "@/utils/tmdb";
 import { useGSAP } from "@gsap/react";
@@ -51,13 +51,15 @@ const Hero = () => {
 	useEffect(() => {
 		if (data && heroMovies.length === 0) {
 			setHeroMovies(
-				data?.map((movie) => ({
+				data.map((movie: MovieData) => ({
 					id: movie.id,
-					title: movie.title,
-					bg: getTmdbImage(movie.backdrop_path, "original"),
-					description: movie.overview,
-					releaseDate: movie.release_date,
-					genres: movie.genres,
+					// Fallback to name if title is missing, then to "Untitled"
+					title: movie.title ?? movie.name ?? "Untitled",
+					// Use fallback for strings to satisfy HeroMovie interface
+					bg: getTmdbImage(movie.backdrop_path ?? "", "original"),
+					description: movie.overview ?? "No description available.",
+					releaseDate: movie.release_date ?? movie.first_air_date ?? "",
+					genres: movie.genres ?? [],
 				}))
 			);
 		}

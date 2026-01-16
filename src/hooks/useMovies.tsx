@@ -2,10 +2,11 @@ import { movieService } from "@/api/movieService";
 import { getTmdbImage } from "@/utils/tmdb";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-interface MovieData {
+export interface MovieData {
 	id: number;
 	title?: string;
 	name?: string;
+	overview?: string;
 	release_date?: string;
 	first_air_date?: string;
 	genre_ids?: number[];
@@ -13,6 +14,7 @@ interface MovieData {
 	backdrop_path?: string;
 	vote_average: number;
 	media_type?: string;
+	genres?: string[];
 }
 
 interface GenreMap {
