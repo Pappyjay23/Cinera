@@ -1,25 +1,32 @@
 import { Route, Routes } from "react-router-dom";
-import TrailerModal from "./components/shared/TrailerModal";
-import { UseAppContext } from "./context/AppCinemaContext";
-import useNetworkStatus from "./hooks/useNetworkStatus";
-import type { AppRoute } from "./routes";
-import routes from "./routes";
-import OfflineScreen from "./screens/Offline/Offline";
+import TrailerModal from "@/components/shared/TrailerModal";
+import { UseAppContext } from "@/context/AppCinemaContext";
+import useNetworkStatus from "@/hooks/useNetworkStatus";
+import type { AppRoute } from "@/routes";
+import routes from "@/routes";
+import OfflineScreen from "@/screens/Offline/Offline";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import GuestOnlyRoute from "@/components/GuestOnlyRoute";
+
+const wrapElement = (route: AppRoute) => {
+	if (route.protected) {
+		return <ProtectedRoute>{route.element}</ProtectedRoute>;
+	}
+
+	if (route.guestOnly) {
+		return <GuestOnlyRoute>{route.element}</GuestOnlyRoute>;
+	}
+
+	return route.element;
+};
 
 const renderRoute = (route: AppRoute) => {
-	// const element = route.protected ? (
-	// 	<RouteGuard>{route.element}</RouteGuard>
-	// ) : (
-	// 	route.element
-	// );
-
-	const element = route.element;
+	const element = wrapElement(route);
 
 	if (!route.children || route.children.length === 0) {
 		return <Route key={route.path} path={route.path} element={element} />;
 	}
 
-	// has nested children
 	return (
 		<Route key={route.path} path={route.path} element={element}>
 			{route.children.map((child) => renderRoute(child))}

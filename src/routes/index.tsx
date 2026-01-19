@@ -1,4 +1,5 @@
 import AppLayout from "@/components/AppLayout";
+import AuthCallback from "@/components/AuthCallback";
 import AuthScreen from "@/screens/Auth/Auth";
 import HomeScreen from "@/screens/Home/Home";
 import MovieDetailScreen from "@/screens/MovieDetail/MovieDetail";
@@ -11,6 +12,7 @@ export type AppRoute = {
 	path: string;
 	element: React.ReactElement;
 	protected?: boolean;
+	guestOnly?: boolean;
 	children?: AppRoute[];
 };
 
@@ -24,12 +26,14 @@ const routes: AppRoute[] = [
 			{ path: "/movie/:id", element: <MovieDetailScreen /> },
 			{ path: "/tv/:id", element: <MovieDetailScreen /> },
 			{ path: "/movies", element: <MoviesScreen /> },
-			{ path: "/watchlist", element: <BookmarksScreen /> },
+			{ path: "/watchlist", element: <BookmarksScreen />, protected: true },
 		],
 	},
 
-	{ path: "/login", element: <AuthScreen /> },
-	{ path: "/signup", element: <AuthScreen /> },
+	{ path: "/auth/v1/callback", element: <AuthCallback /> },
+
+	{ path: "/login", element: <AuthScreen />, guestOnly: true },
+	{ path: "/signup", element: <AuthScreen />, guestOnly: true },
 
 	{ path: "*", element: <NotFoundScreen /> },
 ];

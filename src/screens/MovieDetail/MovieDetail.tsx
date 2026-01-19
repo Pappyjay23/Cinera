@@ -15,6 +15,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import ErrorScreen from "../Error/Error";
 import LoadingScreen from "../Loading/Loading";
+import { UserAuth } from "@/context/AuthContext";
 
 interface Provider {
 	provider_id: number;
@@ -26,6 +27,7 @@ interface Provider {
 const MovieDetailScreen = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
+
 	const {
 		setShowTrailerModal,
 		setTrailer,
@@ -33,6 +35,9 @@ const MovieDetailScreen = () => {
 		bookmarks,
 		handleRemoveFromWatchlist,
 	} = UseAppContext();
+	const { session } = UserAuth();
+	const isLoggedIn = !!session;
+
 	const [imgError, setImgError] = useState(false);
 
 	const location = useLocation();
@@ -46,15 +51,22 @@ const MovieDetailScreen = () => {
 	};
 
 	const handleAdd = () => {
-		handleAddToWatchlist(watchlistDetails);
+		if (isLoggedIn) {
+			handleAddToWatchlist(watchlistDetails);
 
-		toast.success("Added to Watchlist", {
-			description: `${title} has been added to your library.`,
-			action: {
-				label: "View",
-				onClick: () => navigate("/watchlist"),
-			},
-		});
+			toast.success("Added to Watchlist", {
+				description: `${title} has been added to your library.`,
+				action: {
+					label: "View",
+					onClick: () => navigate("/watchlist"),
+				},
+			});
+		} else {
+			sessionStorage.setItem("returnTo", location.pathname);
+
+			toast.info("Please login to add to watchlist");
+			setTimeout(() => navigate("/login"), 300);
+		}
 	};
 
 	const handleRemove = () => {
@@ -107,7 +119,7 @@ const MovieDetailScreen = () => {
 		// Unique by provider_id and Sort by TMDB priority
 		return Array.from(new Map(all.map((p) => [p.provider_id, p])).values())
 			.sort(
-				(a: Provider, b: Provider) => a.display_priority - b.display_priority
+				(a: Provider, b: Provider) => a.display_priority - b.display_priority,
 			)
 			.slice(0, 6); // Keep it clean, show top 6
 	};
@@ -121,10 +133,10 @@ const MovieDetailScreen = () => {
 		mediaType === "movie" && media.runtime
 			? formatRuntime(media.runtime)
 			: mediaType === "tv" &&
-			  media.number_of_seasons &&
-			  `${media.number_of_seasons} ${
+				media.number_of_seasons &&
+				`${media.number_of_seasons} ${
 					media.number_of_seasons === 1 ? "Season" : "Seasons"
-			  }`;
+				}`;
 
 	const casts = media.credits?.cast?.slice(0, 10) || [];
 	const trailer = getTrailer(media.videos?.results);
@@ -308,7 +320,7 @@ const MovieDetailScreen = () => {
 											<CastImage path={cast.profile_path} name={cast.name} />
 											<p>{cast.name}</p>
 										</div>
-									)
+									),
 								)}
 								{casts.length === 0 && (
 									<p className='text-white/50'>No Cast available.</p>

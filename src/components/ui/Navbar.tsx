@@ -5,9 +5,12 @@ import Logo from "@/components/ui/Logo";
 import { Link } from "react-router-dom";
 import { IoBookmark } from "react-icons/io5";
 import { LuLogOut } from "react-icons/lu";
+import { UserAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const { session, signOut, user } = UserAuth();
+
+	const isLoggedIn = !!session;
 
 	const [showDropdown, setShowDropdown] = useState(false);
 	const dropDownRef = useRef<HTMLDivElement>(null);
@@ -33,7 +36,7 @@ const Navbar = () => {
 				filter: "blur(0px)",
 				duration: 0.4,
 				ease: "power3.out",
-			}
+			},
 		);
 	}, [isLoggedIn]);
 
@@ -66,6 +69,15 @@ const Navbar = () => {
 		};
 	}, [showDropdown]);
 
+	const avatarUrl = user?.avatar_url;
+	const picture = user?.picture;
+	const avatarSrc =
+		(typeof avatarUrl === "string" && avatarUrl) ||
+		(typeof picture === "string" && picture) ||
+		`https://api.dicebear.com/7.x/avataaars/svg?seed=${
+			user?.full_name || user?.email || "Cinera"
+		}`;
+
 	return (
 		<div className='flex items-center justify-between gap-2 absolute top-0 left-0 w-full p-4 backdrop-blur-sm z-100 rounded-t-3xl'>
 			<Logo />
@@ -76,11 +88,12 @@ const Navbar = () => {
 					<div className='flex items-center gap-1 md:gap-2 p-1 bg-white/5 border border-white/10 rounded-full shadow-[inset_0px_1px_2px_rgba(255,255,255,0.15),0px_2px_8px_rgba(0,0,0,0.15)]'>
 						<Link
 							to='/login'
-							onClick={() => setIsLoggedIn(true)}
 							className='px-4 py-1.5 text-[10px] rounded-full border border-white/5 hover:bg-white/10 threed-effect cursor-pointer transition-all duration-300 ease-in-out active:scale-95'>
 							Sign in
 						</Link>
-						<Link to='/signup' className='px-4 py-1.5 text-[10px] bg-teal-600 rounded-full shadow-lg shadow-teal-900/20 threed-effect cursor-pointer transition-all duration-300 ease-in-out active:scale-95'>
+						<Link
+							to='/signup'
+							className='px-4 py-1.5 text-[10px] bg-teal-600 rounded-full shadow-lg shadow-teal-900/20 threed-effect cursor-pointer transition-all duration-300 ease-in-out active:scale-95'>
 							Sign up
 						</Link>
 					</div>
@@ -100,7 +113,7 @@ const Navbar = () => {
 																		: "border-white/20 hover:border-white/40"
 																}`}>
 							<img
-								src='https://api.dicebear.com/7.x/avataaars/svg?seed=Cinera'
+								src={avatarSrc}
 								alt='User'
 								className='w-full h-full rounded-full bg-teal-900'
 							/>
@@ -117,7 +130,10 @@ const Navbar = () => {
 									Account
 								</p>
 								<p className='text-xs font-medium text-white truncate'>
-									johndoe@cinera.com
+									{user?.full_name || user?.first_name || "New User"}
+								</p>
+								<p className='text-[10px] font-medium text-white truncate mt-1'>
+									{user?.email}
 								</p>
 							</div>
 
@@ -134,7 +150,7 @@ const Navbar = () => {
 
 							<button
 								onClick={() => {
-									setIsLoggedIn(false);
+									signOut();
 									setShowDropdown(false);
 								}}
 								className='w-full flex items-center gap-2 px-3 py-2 text-xs text-white bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors duration-300 ease-in-out cursor-pointer'>

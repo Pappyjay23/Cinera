@@ -2,8 +2,10 @@ import { UseAppContext } from "@/context/AppCinemaContext";
 import { BiSolidMoviePlay } from "react-icons/bi";
 import { FaHome } from "react-icons/fa";
 import { IoBookmark, IoSearch } from "react-icons/io5";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import Navbar from "@/components/ui/Navbar";
+import { UserAuth } from "@/context/AuthContext";
+import LoadingScreen from "@/screens/Loading/Loading";
 
 const navItems = [
 	{
@@ -25,11 +27,25 @@ const navItems = [
 		name: "Watchlist",
 		href: "/watchlist",
 		icon: IoBookmark,
+		protected: true,
 	},
 ];
 
 const AppLayout = () => {
 	const { heroMovies, activeIndex } = UseAppContext();
+	const { session, isLoadingSession } = UserAuth();
+	const location = useLocation();
+
+	const isLoggedIn = !!session;
+	const isProtectedPath = ["/watchlist"].includes(location.pathname);
+
+	if (isLoadingSession) {
+		return <LoadingScreen />;
+	}
+
+	if (isProtectedPath && !session) {
+		return <Outlet />;
+	}
 
 	return (
 		<div className='relative h-svh flex justify-center items-center px-2 md:px-6'>
@@ -46,38 +62,40 @@ const AppLayout = () => {
 				<div className='p-4 z-30 absolute -bottom-10 left-1/2 -translate-x-1/2'>
 					<div className='flex justify-center'>
 						<div className='flex gap-3 bg-white/3 rounded-full p-2 backdrop-blur-sm border border-white/15 shadow-[inset_0px_1px_2px_rgba(255,255,255,0.15),0px_2px_8px_rgba(0,0,0,0.15)]'>
-							{navItems.map((item) => {
-								const Icon = item.icon;
+							{navItems
+								.filter((item) => !item.protected || isLoggedIn)
+								.map((item) => {
+									const Icon = item.icon;
 
-								return (
-									<NavLink
-										key={item.name}
-										to={item.href}
-										className={() =>
-											`relative group active:scale-90 transition-transform duration-300 ease-in-out transform-gpu will-change-transform outline-none border-0`
-										}>
-										{({ isActive }) => (
-											<>
-												<div
-													className={`flex justify-center items-center w-8 md:w-10 h-8 md:h-10 text-base md:text-lg rounded-full backdrop-blur-3xl border transition-all duration-300 cursor-pointer threed-effect
+									return (
+										<NavLink
+											key={item.name}
+											to={item.href}
+											className={() =>
+												`relative group active:scale-90 transition-transform duration-300 ease-in-out transform-gpu will-change-transform outline-none border-0`
+											}>
+											{({ isActive }) => (
+												<>
+													<div
+														className={`flex justify-center items-center w-8 md:w-10 h-8 md:h-10 text-base md:text-lg rounded-full backdrop-blur-3xl border transition-all duration-300 cursor-pointer threed-effect
 													${
 														isActive
 															? "bg-teal-900 border-white/40 text-white shadow-[0_0_10px_rgba(255,255,255,0.35)]"
 															: "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"
 													}`}>
-													<Icon />
-												</div>
+														<Icon />
+													</div>
 
-												{/* Tooltip */}
-												<div className='absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 rounded-md text-[10px] font-medium text-background bg-foreground opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all duration-500 ease-in-out shadow-md'>
-													{item.name}
-													<div className='absolute left-1/2 -translate-x-1/2 top-full w-2 h-2 bg-foreground rotate-45' />
-												</div>
-											</>
-										)}
-									</NavLink>
-								);
-							})}
+													{/* Tooltip */}
+													<div className='absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 rounded-md text-[10px] font-medium text-background bg-foreground opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all duration-500 ease-in-out shadow-md'>
+														{item.name}
+														<div className='absolute left-1/2 -translate-x-1/2 top-full w-2 h-2 bg-foreground rotate-45' />
+													</div>
+												</>
+											)}
+										</NavLink>
+									);
+								})}
 						</div>
 					</div>
 				</div>

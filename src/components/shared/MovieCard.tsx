@@ -7,6 +7,7 @@ import { IoCheckmarkDoneSharp, IoFilmOutline, IoStar } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import MovieCardSkeleton from "./MovieCardSkeleton";
+import { UserAuth } from "@/context/AuthContext";
 
 interface MovieCardProps {
 	title: string;
@@ -40,6 +41,9 @@ const MovieCard = ({
 		handleRemoveFromWatchlist,
 		bookmarks,
 	} = UseAppContext();
+	const { session } = UserAuth();
+	const isLoggedIn = !!session;
+
 	const [imgError, setImgError] = useState(false);
 	const [isImageLoading, setIsImageLoading] = useState(true);
 	const navigate = useNavigate();
@@ -64,15 +68,22 @@ const MovieCard = ({
 	};
 
 	const handleAdd = () => {
-		handleAddToWatchlist(watchlistDetails);
+		if (isLoggedIn) {
+			handleAddToWatchlist(watchlistDetails);
 
-		toast.success("Added to Watchlist", {
-			description: `${title} has been added to your library.`,
-			action: {
-				label: "View",
-				onClick: () => navigate("/watchlist"),
-			},
-		});
+			toast.success("Added to Watchlist", {
+				description: `${title} has been added to your library.`,
+				action: {
+					label: "View",
+					onClick: () => navigate("/watchlist"),
+				},
+			});
+		} else {
+			sessionStorage.setItem("returnTo", location.pathname);
+
+			toast.info("Please login to add to watchlist");
+			setTimeout(() => navigate("/login"), 300);
+		}
 	};
 
 	const handleRemove = () => {

@@ -65,7 +65,7 @@ const GenreFilter = ({
 	return (
 		<div className='w-full mb-8'>
 			<div className='flex items-center justify-between mb-4'>
-				<h2 className='text-base font-medium text-white/90'>Recently Added</h2>
+				<h2 className='text-base font-medium text-white/90'>Find Your Pick</h2>
 
 				<button
 					onClick={() => setIsOpen(!isOpen)}

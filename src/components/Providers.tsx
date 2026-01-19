@@ -1,4 +1,5 @@
 import { AppCinemaProvider } from "@/context/AppCinemaContext";
+import { AuthContextProvider } from "@/context/AuthContext";
 import useNetworkStatus from "@/hooks/useNetworkStatus";
 import OfflineScreen from "@/screens/Offline/Offline";
 import { BrowserRouter } from "react-router-dom";
@@ -16,9 +17,11 @@ const ProvidersInner = ({ children }: { children: React.ReactNode }) => {
 const Providers = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<BrowserRouter>
-			<AppCinemaProvider>
-				<ProvidersInner>{children}</ProvidersInner>
-			</AppCinemaProvider>
+			<AuthContextProvider>
+				<AppCinemaProvider>
+					<ProvidersInner>{children}</ProvidersInner>
+				</AppCinemaProvider>
+			</AuthContextProvider>
 		</BrowserRouter>
 	);
 };
