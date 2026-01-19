@@ -13,6 +13,7 @@ export type HeroMovie = {
 	id: number;
 	title: string;
 	bg: string;
+	previewBg: string;
 	description?: string;
 	releaseDate?: string;
 	genres?: string[];
@@ -144,13 +145,6 @@ export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 			setIsTransitioning(false);
 		}, 500);
 	};
-
-	// Auto-rotate (premium feel)
-	useEffect(() => {
-		if (heroMovies.length === 0) return;
-		const timer = setInterval(handleNext, 10000);
-		return () => clearInterval(timer);
-	}, [activeIndex, heroMovies.length]);
 
 	return (
 		<AppCinemaContext.Provider

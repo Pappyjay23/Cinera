@@ -4,7 +4,7 @@ import { formatReadableDate } from "@/utils";
 import { getTmdbImage } from "@/utils/tmdb";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsFillPlayFill } from "react-icons/bs";
 import { GrCircleInformation } from "react-icons/gr";
 import { IoIosArrowRoundForward } from "react-icons/io";
@@ -17,6 +17,7 @@ import { toast } from "sonner";
 const Hero = () => {
 	const {
 		activeMovie,
+		activeIndex,
 		nextMovie,
 		handleNext,
 		heroMovies,
@@ -26,6 +27,7 @@ const Hero = () => {
 		setTrailer,
 	} = UseAppContext();
 
+	const [isImageLoaded, setIsImageLoaded] = useState(false);
 	const textContainerRef = useRef<HTMLDivElement>(null);
 
 	const { data } = useTrendingMovies();
@@ -49,18 +51,41 @@ const Hero = () => {
 	};
 
 	useEffect(() => {
+		if (!activeMovie?.bg || !nextMovie?.previewBg) return;
+
+		setIsImageLoaded(false);
+
+		const loadImage = (src: string) => {
+			return new Promise((resolve, reject) => {
+				const img = new Image();
+				img.src = src;
+				img.onload = resolve;
+				img.onerror = reject;
+			});
+		};
+
+		Promise.all([loadImage(activeMovie.bg), loadImage(nextMovie.previewBg)])
+			.then(() => {
+				setIsImageLoaded(true);
+			})
+			.catch((err) => {
+				console.error("Failed to preload hero images", err);
+				setIsImageLoaded(true);
+			});
+	}, [activeMovie?.id, nextMovie?.id]);
+
+	useEffect(() => {
 		if (data && heroMovies.length === 0) {
 			setHeroMovies(
 				data.map((movie: MovieData) => ({
 					id: movie.id,
-					// Fallback to name if title is missing, then to "Untitled"
 					title: movie.title ?? movie.name ?? "Untitled",
-					// Use fallback for strings to satisfy HeroMovie interface
 					bg: getTmdbImage(movie.backdrop_path ?? "", "original"),
+					previewBg: getTmdbImage(movie.backdrop_path ?? "", "small"),
 					description: movie.overview ?? "No description available.",
 					releaseDate: movie.release_date ?? movie.first_air_date ?? "",
 					genres: movie.genres ?? [],
-				}))
+				})),
 			);
 		}
 	}, [data, setHeroMovies, heroMovies.length]);
@@ -84,12 +109,12 @@ const Hero = () => {
 				duration: 0.8,
 				stagger: 0.1,
 				ease: "power3.out",
-			}
+			},
 		);
 	}, [activeMovie?.id]);
 
 	useGSAP(() => {
-		if (!textContainerRef.current) return;
+		if (!textContainerRef.current || !isImageLoaded) return;
 
 		if (isTransitioning) {
 			// Fade OUT when the transition starts
@@ -101,9 +126,16 @@ const Hero = () => {
 				ease: "power2.in",
 			});
 		}
-	}, [isTransitioning]);
+	}, [isTransitioning, isImageLoaded]);
 
-	if (!activeMovie) return <HeroSkeleton />;
+	// Auto-rotate (premium feel)
+	useEffect(() => {
+		if (heroMovies.length === 0 || !isImageLoaded) return;
+		const timer = setInterval(handleNext, 10000);
+		return () => clearInterval(timer);
+	}, [activeIndex, heroMovies.length, isImageLoaded, handleNext]);
+
+	if (!activeMovie || !isImageLoaded) return <HeroSkeleton />;
 
 	return (
 		<div className='flex items-center relative h-full w-full px-4 md:px-6'>
@@ -116,19 +148,22 @@ const Hero = () => {
 			<div className='absolute bottom-10 z-40 right-5' onClick={handleNext}>
 				<div className='flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform duration-500 ease-in-out group'>
 					<div className='h-20 md:h-25 w-30 md:w-40 border border-white/5 bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl overflow-hidden relative'>
-						{heroMovies?.map((movie) => (
-							<img
-								key={movie.id}
-								src={movie.bg}
-								alt='Preview'
-								className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-110
-                ${
-									movie.id === nextMovie?.id
-										? "opacity-100 scale-100"
-										: "opacity-0 scale-110"
-								}`}
-							/>
-						))}
+						{heroMovies.map((movie) => {
+							if (!movie) return null;
+							return (
+								<img
+									key={movie.id}
+									src={movie.previewBg}
+									alt='Preview'
+									loading='eager'
+									className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-110 ${
+										movie.id === nextMovie?.id
+											? "opacity-100 scale-100"
+											: "opacity-0 scale-110"
+									}`}
+								/>
+							);
+						})}
 						<div className='absolute inset-0 z-20 bg-black/40 group-hover:bg-transparent transition-all duration-300 ease-in-out' />
 					</div>
 					<span className='capitalize font-normal flex items-center gap-1 text-[9px] md:text-[10px] animate-pulse group-hover:animate-none'>
