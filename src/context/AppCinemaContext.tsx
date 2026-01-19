@@ -1,3 +1,4 @@
+import { bookmarkService } from "@/utils/supabase/supabaseService";
 import {
 	createContext,
 	type ReactNode,
@@ -5,6 +6,8 @@ import {
 	useEffect,
 	useState,
 } from "react";
+import { UserAuth } from "./AuthContext";
+import { toast } from "sonner";
 
 export type HeroMovie = {
 	id: number;
@@ -50,15 +53,17 @@ interface AppCinemaContextType {
 	selectedGenres: string[];
 	setSelectedGenres: React.Dispatch<React.SetStateAction<string[]>>;
 	bookmarks: MovieData[];
+	isBookmarksLoading: boolean;
 	handleAddToWatchlist: (movie: MovieData) => void;
 	handleRemoveFromWatchlist: (id: number) => void;
 }
 
 const AppCinemaContext = createContext<AppCinemaContextType | undefined>(
-	undefined
+	undefined,
 );
 
 export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
+	const { session } = UserAuth();
 	const [heroMovies, setHeroMovies] = useState<HeroMovie[]>([]);
 
 	const [activeIndex, setActiveIndex] = useState(0);
@@ -80,12 +85,53 @@ export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
 	const [bookmarks, setBookmarks] = useState<MovieData[]>([]);
+	const [isBookmarksLoading, setIsBookmarksLoading] = useState(true);
 
-	const handleAddToWatchlist = (movie: MovieData) => {
-		setBookmarks((prevBookmarks) => [...prevBookmarks, movie]);
+	useEffect(() => {
+		const loadBookmarks = async () => {
+			if (session?.user.id) {
+				setIsBookmarksLoading(true);
+				try {
+					const data = await bookmarkService.getBookmarks(session.user.id);
+					setBookmarks(data);
+				} catch (err) {
+					console.error("Error loading bookmarks:", err);
+				} finally {
+					setIsBookmarksLoading(false);
+				}
+			} else {
+				setBookmarks([]);
+				setIsBookmarksLoading(false);
+			}
+		};
+
+		loadBookmarks();
+	}, [session]);
+
+	const handleAddToWatchlist = async (movie: MovieData) => {
+		if (!session) return;
+
+		try {
+			setBookmarks((prev) => [...prev, movie]);
+
+			await bookmarkService.addToWatchlist(session.user.id, movie);
+		} catch {
+			setBookmarks((prev) => prev.filter((m) => m.id !== movie.id));
+			toast.error("Failed to save bookmark");
+		}
 	};
-	const handleRemoveFromWatchlist = (id: number) => {
-		setBookmarks((prevBookmarks) => prevBookmarks.filter((m) => m.id !== id));
+	const handleRemoveFromWatchlist = async (id: number) => {
+		if (!session) return;
+
+		const originalBookmarks = [...bookmarks];
+		try {
+			setBookmarks((prev) => prev.filter((m) => m.id !== id));
+
+			await bookmarkService.removeFromWatchlist(session.user.id, id);
+		} catch {
+			setBookmarks(originalBookmarks);
+			toast.error("Failed to remove bookmark");
+		}
 	};
 
 	const handleNext = () => {
@@ -125,6 +171,7 @@ export const AppCinemaProvider = ({ children }: { children: ReactNode }) => {
 				selectedGenres,
 				setSelectedGenres,
 				bookmarks,
+				isBookmarksLoading,
 				handleAddToWatchlist,
 				handleRemoveFromWatchlist,
 			}}>

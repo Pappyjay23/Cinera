@@ -1,14 +1,13 @@
 import MovieCard from "@/components/shared/MovieCard";
 import MovieCardSkeleton from "@/components/shared/MovieCardSkeleton";
 import { UseAppContext } from "@/context/AppCinemaContext";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { IoArrowUp, IoBookmark } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 const WatchlistScreen = () => {
-	const { bookmarks } = UseAppContext();
+	const { bookmarks, isBookmarksLoading } = UseAppContext();
 
-	const [isLoading, setIsLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv">("all");
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
@@ -27,20 +26,15 @@ const WatchlistScreen = () => {
 		containerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
 	};
 
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setIsLoading(false);
-		}, 2000);
-
-		return () => clearTimeout(timer);
-	}, []);
-
 	const filteredBookmarks = bookmarks.filter((movie) => {
 		if (activeTab === "all") return true;
 		return movie.mediaType === activeTab;
 	});
 
-	const hasItems = filteredBookmarks.length > 0;
+
+	const showSkeleton = isBookmarksLoading;
+	const showEmptyState = !isBookmarksLoading && filteredBookmarks.length === 0;
+	const showItems = !isBookmarksLoading && filteredBookmarks.length > 0;
 
 	return (
 		<div className='relative flex-1 overflow-hidden pt-20 pb-12 px-4 md:px-6 bg-black/40 backdrop-blur-xs w-full'>
@@ -76,39 +70,37 @@ const WatchlistScreen = () => {
 			</div>
 
 			<div className='relative flex-1 w-full'>
-				{hasItems && (
-					<div className='relative'>
-						{/* Skeleton */}
-						{isLoading && (
-							<div className='absolute inset-0 flex flex-wrap justify-center gap-6 h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20'>
-								{Array(filteredBookmarks.length)
-									.fill(0)
-									.map((_, i) => (
-										<MovieCardSkeleton size='lg' key={i} />
-									))}
-							</div>
-						)}
+				<div className='relative'>
+					{/* Skeleton */}
+					{showSkeleton && (
+						<div className='absolute inset-0 flex flex-wrap justify-center gap-6 h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20'>
+							{Array(6)
+								.fill(0)
+								.map((_, i) => (
+									<MovieCardSkeleton size='lg' key={i} />
+								))}
+						</div>
+					)}
 
-						{/* Scroll container */}
-						{!isLoading && (
-							<div
-								ref={containerRef}
-								onScroll={handleScroll}
-								className='flex flex-wrap justify-center gap-6 overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20'>
-								{filteredBookmarks.map((movie) => {
-									const path = movie.mediaType || "movie";
-									return (
-										<Link key={movie.id} to={`/${path}/${movie.id}`}>
-											<MovieCard size='lg' type='watchlist' {...movie} />
-										</Link>
-									);
-								})}
-							</div>
-						)}
-					</div>
-				)}
+					{/* Scroll container */}
+					{showItems && (
+						<div
+							ref={containerRef}
+							onScroll={handleScroll}
+							className='flex flex-wrap justify-center gap-6 overflow-y-auto h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] pb-30 md:pb-20'>
+							{filteredBookmarks.map((movie) => {
+								const path = movie.mediaType || "movie";
+								return (
+									<Link key={movie.id} to={`/${path}/${movie.id}`}>
+										<MovieCard size='lg' type='watchlist' {...movie} />
+									</Link>
+								);
+							})}
+						</div>
+					)}
+				</div>
 
-				{!hasItems && (
+				{showEmptyState && (
 					<div className='flex flex-col items-center justify-center text-center'>
 						<div className='w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10'>
 							<IoBookmark className='text-4xl text-white' />

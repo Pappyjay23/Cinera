@@ -149,7 +149,7 @@ const MovieDetailScreen = () => {
 		hoverImage: getTmdbImage(media.backdrop_path, "medium"),
 		genre: media.genres?.[0]?.name || "",
 		size: "lg",
-		mediaType: media.media_type,
+		mediaType: mediaType as "movie" | "tv",
 		type: "watchlist",
 		id: media.id,
 		rating: media.vote_average.toFixed(1),

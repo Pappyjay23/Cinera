@@ -65,6 +65,16 @@ const SearchScreen = () => {
 				</div>
 			</div>
 
+			{isLoading && movies.length === 0 && (
+				<div className='relative py-4 flex flex-wrap justify-center gap-3 items-center h-[70svh] md:h-[60svh] overflow-y-auto px-2'>
+					{Array(8)
+						.fill(null)
+						.map((_, index) => (
+							<MovieCardSkeleton key={index} size='lg' />
+						))}
+				</div>
+			)}
+
 			{movies.length > 0 ? (
 				<div className='relative flex mt-4'>
 					<div
@@ -100,17 +110,6 @@ const SearchScreen = () => {
 								)}
 							</div>
 						)}
-					</div>
-
-					<div
-						className={`absolute py-4 flex flex-wrap justify-center gap-3 items-center no-scrollbar h-[70svh] md:h-[60svh] [@media(min-width:2000px)]:h-[35svh] overflow-y-auto  ${
-							isLoading ? "opacity-100 z-2" : "opacity-0 z-1"
-						} transition-all duration-700 ease-in-out`}>
-						{Array(12)
-							.fill(null)
-							.map((_, index) => (
-								<MovieCardSkeleton key={index} size='lg' />
-							))}
 					</div>
 				</div>
 			) : (
