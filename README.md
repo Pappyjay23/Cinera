@@ -1,73 +1,82 @@
-# React + TypeScript + Vite
+<div align="center"> <h1> 🎬 Cinera </h1> <p><strong>A premium cinematic discovery platform for the modern user.</strong></p> </div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🌟 Overview
 
-Currently, two official plugins are available:
+Cinera is a high-performance, aesthetically driven media discovery engine. It bridges the gap between massive streaming libraries and the user through a curated, immersive interface. Designed with an "innovative front-end" philosophy, Cinera prioritizes visual storytelling, utilizing fluid motion, intelligent asset pre-caching, and a scalable architecture to provide a native-app feel on the web.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The project leverages a Progressive Web App (PWA) architecture, ensuring your watchlist and discovery feed are accessible anywhere, with a heavy emphasis on "binary" loading states to maintain visual integrity.
 
-## React Compiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Snapshot 📸
+![Cinera](https://github.com/user-attachments/assets/8c2ec667-71d4-4801-921e-16fac6bd410d)
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠 Tech Stack
+- [React](https://react.dev) – Core UI framework.
+- [TanStack Query](https://tanstack.com/query/latest) – Server-state management for seamless data fetching and caching.
+- [Supabase](https://supabase.com/) - Backend-as-a-Service for PostgreSQL and Secure Authentication
+- [Vite](https://vitejs.dev/) - Next-generation frontend tooling for an ultra-fast development experience.
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework for styling and responsive design  
+- [GSAP](https://gsap.com/) – Implementation of subtle, purposeful animations to enhance UX without distracting from productivity.  
+- [Vite-PWA](https://vite-pwa-org.netlify.app/) – Transforming the web experience into a high-performance installable application.
+- [Vercel](https://vercel.com/) – Hosting and deployment platform for seamless CI/CD  
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Key Features
+- **Cinematic Hero Engine**: An auto-rotating showcase with intelligent parallel pre-loading of backdrop and preview assets to eliminate progressive loading artifacts.
+- **Global Search & Infinite Scroll**: Real-time discovery powered by TMDB, featuring debounced queries and smooth pagination via Intersection Observer.
+- **PWA Ready**: Installable on desktop and mobile for a native-app feel.
+- **Smart Bookmarking**: A secure watchlist system utilizing a composite key architecture to ensure data integrity
+
+
+## How to run locally 💻
+
+Follow these steps to run Cinera on your local machine.
+
+### Clone this repository
+
+```bash
+git clone https://github.com/Pappyjay23/Cinera.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Navigate to the directory
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd Cinera
 ```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Environment Setup
+Create a ```.env``` file in the root directory and add your credentials:
+
+```bash
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_key
+VITE_TMDB_READ_ACCESS_TOKEN=your_tmdb_token
+```
+
+### Run
+
+Run the development server to view the app.
+
+```bash
+npm run dev
+```
+
+Now, you can navigate to http://localhost:5173/ to view the app.
+
+### Build
+
+```bash
+npm run build
+```
+
+## Credits ✍
+
+Implementation by [@Pappyjay23](https://github.com/Pappyjay23)
